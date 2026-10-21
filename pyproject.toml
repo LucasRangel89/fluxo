@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fluxo-prompts"
-version = "0.1.0"
+version = "0.2.0"
 description = "Fluxo de prompts especializado para análise de obras audiovisuais (filmes e séries) com IA."
 readme = "README.md"
 requires-python = ">=3.9"

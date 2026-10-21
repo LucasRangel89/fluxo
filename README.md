@@ -126,13 +126,21 @@ ou ignore-as, como preferir.
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-## Próximos passos (ideias)
+## Próximos passos (plano faseado)
 
-- [ ] Tradução dos templates de prompts para inglês/espanhol
-- [ ] Variações dos prompts por tipo de obra (documentário, animação, curta)
-- [ ] Empacotar os prompts junto ao pacote, para a CLI funcionar instalada de qualquer pasta
-- [ ] Modo interativo da CLI (perguntas guiadas no terminal)
-- [ ] Integração opcional com APIs de LLMs para rodar o fluxo de ponta a ponta
+O projeto está evoluindo em fases, a partir de uma
+[análise crítica](docs/analise-critica.md) do próprio fluxo:
+
+- [x] **Fase 1 — Prompts v2**: persona e regras anti-alucinação, formato de
+  saída estruturado, contra-argumento na Etapa 2.2 e novos subitens teóricos
+  (atuação, autoria, gênero, espectador)
+- [ ] **Fase 2 — UI web**: página estática para montar e copiar os prompts sem terminal
+- [ ] **Fase 3 — Estrutura**: Etapa 0 (setup + sua hipótese), Etapa 1 em dois tempos, close reading (2.3)
+- [ ] **Fase 4 — Variantes e base**: séries, análise comparativa, modos
+  iniciante × acadêmico, CLI interativa e empacotamento dos prompts
+
+Ideias para mais adiante: tradução dos prompts (EN/ES) e integração opcional
+com APIs de LLMs.
 
 ## Contribuindo
 

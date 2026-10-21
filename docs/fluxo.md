@@ -94,9 +94,14 @@ A etapa final ([template](../prompts/etapa-03-sintese-conexoes.md)) entrega:
 
 1. **Síntese e relevância** — a essência da obra em um parágrafo;
 2. **Pontos-chave** — os insights da *sua* conversa (não um resumo genérico);
-3. **Diálogos audiovisuais** — 2 ou 3 obras para assistir em seguida e por quê;
-4. **Perguntas para reflexão pessoal** — a obra espelhada em você e no presente;
-5. **Crítica, teoria e bastidores** — fontes reais para continuar estudando.
+3. **Balanço Crítico** — julgamento fundamentado, nos termos da própria obra:
+   onde é exemplar, onde falha, para quem funciona;
+4. **Diálogos audiovisuais** — 2 ou 3 obras para assistir em seguida e por quê;
+5. **Perguntas para reflexão pessoal** — a obra espelhada em você e no presente;
+6. **Crítica, teoria e bastidores** — fontes reais para continuar estudando
+   (só as de existência confiável; o resto vem marcado "a confirmar");
+7. **Ficha-resumo** — tese, achados e próxima obra em tópicos, pronta para
+   salvar nas suas notas.
 
 Guarde essa resposta: ela é o "relatório final" da análise. A CLI gera um
 [`registro.md`](../templates/registro-de-analise.md) com espaço para colar e

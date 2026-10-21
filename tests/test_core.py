@@ -99,6 +99,36 @@ class TestGerarPrompt(unittest.TestCase):
         self.assertIn("Por quê?", prompt)
 
 
+class TestPromptsV2(unittest.TestCase):
+    """Características da Fase 1: blindagem, formato e subitens teóricos."""
+
+    def test_etapa1_tem_persona_guardrails_formato_e_subitens(self):
+        prompt = gerar_prompt("1", VALORES)
+        self.assertIn("crítico de cinema", prompt)          # persona (P1)
+        self.assertIn("(a confirmar)", prompt)              # guardrail (P2)
+        self.assertIn("tabela-resumo", prompt)              # formato (P3)
+        self.assertIn("minutagem aproximada", prompt)       # evidências (P3)
+        self.assertIn("Atuação e Elenco", prompt)           # subitem (P10)
+        self.assertIn("Gênero e Convenções", prompt)        # subitem (P10)
+        self.assertIn("Posição do Espectador", prompt)      # subitem (P10)
+        self.assertIn("focalização", prompt)                # subitem (P10)
+        self.assertIn("kishōtenketsu", prompt)              # viés clássico (P11)
+        self.assertIn("7 dimensões", prompt)                # mantém as 7 dimensões
+
+    def test_etapa21_pede_diversidade_de_perguntas(self):
+        prompt = gerar_prompt("2.1", VALORES)
+        self.assertIn("diversidade", prompt)                # P6
+
+    def test_etapa22_tem_contra_argumento(self):
+        prompt = gerar_prompt("2.2", VALORES)
+        self.assertIn("Contra-argumento", prompt)           # P7
+
+    def test_etapa3_tem_balanco_critico_e_ficha_resumo(self):
+        prompt = gerar_prompt("3", VALORES)
+        self.assertIn("Balanço Crítico", prompt)            # P9
+        self.assertIn("Ficha-Resumo", prompt)               # P3
+
+
 class TestSlugificar(unittest.TestCase):
     def test_acentos_pontuacao_e_espacos(self):
         self.assertEqual(slugificar("Cidade de Deus (2002)"), "cidade-de-deus-2002")

@@ -100,13 +100,21 @@ fluxo/
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-## Roadmap ideas
+## Roadmap (phased plan)
 
-- [ ] English/Spanish translations of the prompt templates
-- [ ] Prompt variants per work type (documentary, animation, shorts)
-- [ ] Bundle the prompts with the package so the CLI works from any folder
-- [ ] Interactive CLI mode (guided questions in the terminal)
-- [ ] Optional LLM-API integration to run the whole flow end to end
+The project is evolving in phases, based on a
+[critical analysis](docs/analise-critica.md) of the flow itself (in PT-BR):
+
+- [x] **Phase 1 — Prompts v2**: critic persona and anti-hallucination rules,
+  structured output format, built-in counterargument in Stage 2.2, new theory
+  sub-items (performance, authorship, genre, spectator)
+- [ ] **Phase 2 — Web UI**: static page to build and copy prompts without a terminal
+- [ ] **Phase 3 — Structure**: Stage 0 (setup + your own hypothesis), two-part
+  Stage 1, close-reading stage (2.3)
+- [ ] **Phase 4 — Variants & plumbing**: series variant, comparative analysis,
+  beginner × academic modes, interactive CLI, bundled prompts
+
+Later ideas: EN/ES prompt translations and optional LLM-API integration.
 
 ## Contributing
 

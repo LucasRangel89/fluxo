@@ -1,14 +1,15 @@
 # Etapa 2.2 — Execução da Análise Focada
 
 > **objetivo:** mergulhar fundo em **uma** questão. Em vez de um panorama, aqui
-> a IA constrói um argumento: tese clara, evidências concretas da obra e
-> análise de como essas evidências produzem significado.
+> a IA constrói um argumento completo: tese clara, evidências concretas da
+> obra, análise de como elas produzem significado — e um **contra-argumento**
+> obrigatório, para a tese não passar sem ser testada.
 
 ## Quando usar
 
 **Na mesma conversa**, imediatamente após escolher uma das perguntas propostas
-na Etapa 2.1. Pode ser repetida várias vezes — uma para cada pergunta que você
-quiser explorar.
+na Etapa 2.1 (ou formular a sua própria). Pode ser repetida várias vezes —
+uma para cada pergunta que você quiser explorar.
 
 ## Placeholders
 
@@ -24,21 +25,22 @@ quiser explorar.
 Ao construir sua análise, siga esta estrutura:
 
 1. **Argumento Central:** Formule uma tese clara que responda à pergunta.
-2. **Evidências da Obra:** Sustente seu argumento descrevendo cenas, sequências, diálogos ou escolhas técnicas específicas (ex.: "na cena X, o uso do close-up extremo combinado com a iluminação de baixo para cima...").
+2. **Evidências da Obra:** Sustente seu argumento descrevendo cenas, sequências, diálogos ou escolhas técnicas específicas (ex.: "na cena X, o uso do close-up extremo combinado com a iluminação de baixo para cima..."), com minutagem ou episódio (T1:E5) aproximados. Se não tiver certeza de algum detalhe de cena, sinalize em vez de inventar.
 3. **Análise da Evidência:** Explique *como* esses elementos técnicos e narrativos constroem o significado que você está defendendo.
-4. **Contexto e Comparações:** Se relevante, compare essa abordagem com a de outras obras do mesmo diretor, gênero ou período para enriquecer a análise.
+4. **Contra-argumento:** Apresente a objeção mais forte à sua própria tese — uma leitura alternativa plausível — e diga que tipo de evidência derrubaria o seu argumento. Em seguida, responda à objeção ou ajuste a tese.
+5. **Contexto e Comparações:** Se relevante, compare essa abordagem com a de outras obras do mesmo diretor, gênero ou período para enriquecer a análise.
 <!-- FIM DO PROMPT -->
 
 ## Dicas
 
-- Esta é a etapa mais "argumentativa" do fluxo: provoque a IA. Se discordar da
-  tese, responda com seu contraponto e peça que ela defenda ou revise o
-  argumento — o debate costuma gerar os melhores insights.
-- Peça referências temporais quando útil: *"Indique em que ponto do filme
-  (minutagem aproximada) cada cena citada acontece"* — e confira depois,
-  pois IAs podem errar detalhes de cenas.
-- Quer mais profundidade ainda? Peça uma segunda rodada:
-  *"Agora critique sua própria tese: qual é o contra-argumento mais forte?"*
+- Esta é a etapa mais "argumentativa" do fluxo: **provoque a IA**. O prompt já
+  a obriga a apresentar um contra-argumento; se você tiver um contraexemplo
+  seu (uma cena que parece desmentir a tese), jogue na mesa e veja a tese se
+  refinar — ou ruir, o que também é um ótimo resultado.
+- Confira as cenas citadas (a minutagem/episódio ajuda nisso): é aqui que IAs
+  mais "preenchem lacunas" com detalhes plausíveis, porém inventados.
+- Terminou uma pergunta e sobrou fôlego? Volte à lista da Etapa 2.1 e rode a
+  2.2 de novo com outra questão.
 
 ## Próxima etapa
 
