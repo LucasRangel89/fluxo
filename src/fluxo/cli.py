@@ -3,7 +3,10 @@
 Comandos:
     fluxo listar   -> mostra as etapas e o que cada uma requer
     fluxo gerar N  -> gera o prompt da etapa N, pronto para colar na IA
-    fluxo novo     -> cria uma pasta de análise com os 4 prompts + registro
+    fluxo novo     -> cria uma pasta de análise com todos os prompts + registro
+
+Etapas: 0 (preparação), 1 (360° de uma vez) ou 1a+1b (em dois tempos),
+2.1 (proposta), 2.2 (focada), 2.3 (close reading, opcional) e 3 (síntese).
 """
 
 from __future__ import annotations
@@ -32,7 +35,12 @@ def _valores(args: argparse.Namespace) -> dict[str, str]:
     return {
         "TITULO_DA_OBRA": getattr(args, "titulo", "") or "",
         "DIRETOR_OU_CRIADOR": getattr(args, "diretor", "") or "",
+        "TIPO_DE_OBRA": getattr(args, "tipo", "") or "",
+        "META_DA_ANALISE": getattr(args, "objetivo", "") or "",
+        "NIVEL_DO_USUARIO": getattr(args, "nivel", "") or "",
+        "IMPRESSOES_INICIAIS": getattr(args, "impressoes", "") or "",
         "PERGUNTA_ESCOLHIDA": getattr(args, "pergunta", "") or "",
+        "SEQUENCIA_ESCOLHIDA": getattr(args, "sequencia", "") or "",
     }
 
 
@@ -97,6 +105,15 @@ def cmd_gerar(args: argparse.Namespace) -> int:
     return 0
 
 
+# Placeholders que podem ficar pendentes ao montar a estrutura com `novo`
+# (são preenchidos ao longo da conversa: pergunta da 2.1, sequência da 2.3...).
+_PENDENTES_ACEITAVEIS = (
+    "DIRETOR_OU_CRIADOR", "TIPO_DE_OBRA", "META_DA_ANALISE",
+    "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS", "PERGUNTA_ESCOLHIDA",
+    "SEQUENCIA_ESCOLHIDA",
+)
+
+
 def cmd_novo(args: argparse.Namespace) -> int:
     valores = _valores(args)
     if not valores["TITULO_DA_OBRA"]:
@@ -126,9 +143,7 @@ def cmd_novo(args: argparse.Namespace) -> int:
     for nome in criados:
         print(f"  - {nome}")
     pendentes = [
-        chave
-        for chave in ("DIRETOR_OU_CRIADOR", "PERGUNTA_ESCOLHIDA")
-        if not valores.get(chave)
+        chave for chave in _PENDENTES_ACEITAVEIS if not valores.get(chave)
     ]
     if pendentes:
         nomes = ", ".join(PLACEHOLDERS[chave][0] for chave in pendentes)
@@ -137,6 +152,31 @@ def cmd_novo(args: argparse.Namespace) -> int:
             "[PREENCHER: ...] nos arquivos gerados quando chegar a hora."
         )
     return 0
+
+
+def _flags_da_obra(parser: argparse.ArgumentParser) -> None:
+    """Flags de preenchimento compartilhadas por `gerar` e `novo`."""
+    parser.add_argument("--titulo", help="Título do filme/série.")
+    parser.add_argument("--diretor", help="Diretor(a)/criador(a) da obra.")
+    parser.add_argument(
+        "--tipo",
+        help="Tipo da obra: filme, série/temporada, episódio, documentário... (etapa 0).",
+    )
+    parser.add_argument("--objetivo", help="Seu objetivo com a análise (etapa 0).")
+    parser.add_argument(
+        "--nivel", help="Seu nível de familiaridade com análise (etapa 0)."
+    )
+    parser.add_argument(
+        "--impressoes",
+        help="Suas impressões/hipóteses iniciais, antes da análise (etapa 0).",
+    )
+    parser.add_argument(
+        "--pergunta", help="Pergunta escolhida na Etapa 2.1 (etapa 2.2)."
+    )
+    parser.add_argument(
+        "--sequencia",
+        help="Sequência a dissecar, com minutagem/episódio (etapa 2.3).",
+    )
 
 
 def construir_parser() -> argparse.ArgumentParser:
@@ -158,10 +198,11 @@ def construir_parser() -> argparse.ArgumentParser:
     p_gerar = sub.add_parser(
         "gerar", help="Gera o prompt de uma etapa com os placeholders preenchidos."
     )
-    p_gerar.add_argument("etapa", help="Etapa desejada: 1, 2.1, 2.2 ou 3.")
-    p_gerar.add_argument("--titulo", help="Título do filme/série (etapas 1, 2.1 e 3).")
-    p_gerar.add_argument("--diretor", help="Diretor(a)/criador(a) da obra (etapa 1).")
-    p_gerar.add_argument("--pergunta", help="Pergunta escolhida na Etapa 2.1 (etapa 2.2).")
+    p_gerar.add_argument(
+        "etapa",
+        help="Etapa desejada: 0, 1, 1a, 1b, 2.1, 2.2, 2.3 ou 3 (veja 'fluxo listar').",
+    )
+    _flags_da_obra(p_gerar)
     p_gerar.add_argument(
         "--salvar",
         metavar="arquivo",
@@ -175,14 +216,14 @@ def construir_parser() -> argparse.ArgumentParser:
     p_gerar.set_defaults(func=cmd_gerar)
 
     p_novo = sub.add_parser(
-        "novo", help="Cria uma pasta de análise com os 4 prompts e um registro."
+        "novo",
+        help="Cria uma pasta de análise com os prompts de todas as etapas e um registro.",
     )
-    p_novo.add_argument("--titulo", required=True, help="Título do filme/série.")
-    p_novo.add_argument("--diretor", help="Diretor(a)/criador(a) da obra.")
-    p_novo.add_argument(
-        "--pergunta",
-        help="Pergunta escolhida (se omitida, fica pendente no arquivo da Etapa 2.2).",
-    )
+    _flags_da_obra(p_novo)
+    # Em `novo`, o título é obrigatório (define a pasta e os arquivos).
+    for acao in p_novo._actions:
+        if acao.dest == "titulo":
+            acao.required = True
     p_novo.add_argument("--slug", help="Nome da pasta (padrão: derivado do título).")
     p_novo.add_argument(
         "--destino", default="analises", help="Pasta base das análises (padrão: analises)."

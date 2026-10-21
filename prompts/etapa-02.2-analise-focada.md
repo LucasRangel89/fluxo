@@ -44,4 +44,7 @@ Ao construir sua análise, siga esta estrutura:
 
 ## Próxima etapa
 
-➡️ [Etapa 3 — Consolidação, Diálogos e Expansão](etapa-03-sintese-conexoes.md)
+➡️ Opcional, para ir ainda mais fundo:
+[Etapa 2.3 — Close Reading de uma Sequência](etapa-02.3-close-reading.md)
+
+➡️ Fechamento: [Etapa 3 — Consolidação, Diálogos e Expansão](etapa-03-sintese-conexoes.md)

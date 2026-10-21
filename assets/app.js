@@ -1,12 +1,14 @@
 "use strict";
 
 /* ============================================================================
-   Fluxo — interface web (Fase 2)
+   Fluxo — interface web (Fases 2 e 3)
 
    Lê os templates de `prompts/` em tempo real (mesma fonte da CLI), extrai o
    prompt entre os marcadores HTML e preenche os placeholders a partir do
-   formulário. A lista ETAPAS abaixo espelha `src/fluxo/core.py` — se mudar
-   um lado, mude o outro (tests/test_web.py verifica a consistência).
+   formulário. Os campos extras exibidos por etapa são derivados dos
+   placeholders que o template daquela etapa realmente usa.
+   A lista ETAPAS abaixo espelha `src/fluxo/core.py` — se mudar um lado,
+   mude o outro (tests/test_web.py verifica a consistência).
    ========================================================================== */
 
 const MARCADOR_INICIO = "<!-- INICIO DO PROMPT -->";
@@ -25,14 +27,51 @@ const CAMPOS = {
     rotulo: "diretor(a)/criador(a)",
     pendente: "[diretor(a)/criador(a)]",
   },
+  TIPO_DE_OBRA: {
+    id: "tipo",
+    rotulo: "tipo da obra",
+    pendente: "[tipo da obra]",
+  },
+  META_DA_ANALISE: {
+    id: "objetivo",
+    rotulo: "seu objetivo",
+    pendente: "[seu objetivo com a análise]",
+  },
+  NIVEL_DO_USUARIO: {
+    id: "nivel",
+    rotulo: "seu nível",
+    pendente: "[seu nível de familiaridade]",
+  },
+  IMPRESSOES_INICIAIS: {
+    id: "impressoes",
+    rotulo: "suas impressões iniciais",
+    pendente: "[suas impressões e hipótese iniciais]",
+  },
   PERGUNTA_ESCOLHIDA: {
     id: "pergunta",
     rotulo: "pergunta escolhida",
     pendente: "[pergunta escolhida na Etapa 2.1]",
   },
+  SEQUENCIA_ESCOLHIDA: {
+    id: "sequencia",
+    rotulo: "sequência escolhida",
+    pendente: "[sequência escolhida para o close reading]",
+  },
 };
 
+const IDS_CAMPOS = Object.values(CAMPOS).map((c) => c.id);
+
 const ETAPAS = [
+  {
+    id: "0",
+    rotulo: "Etapa 0",
+    nome: "Preparação",
+    arquivo: "prompts/etapa-00-preparacao.md",
+    saida: "00-prompt-preparacao.md",
+    descricao:
+      "Preparação (opcional, mas recomendada): identifica a obra, registra a sua hipótese ANTES de a IA opinar e calibra a conversa ao seu objetivo e nível.",
+    extras: ["TIPO_DE_OBRA", "META_DA_ANALISE", "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS"],
+  },
   {
     id: "1",
     rotulo: "Etapa 1",
@@ -40,7 +79,28 @@ const ETAPAS = [
     arquivo: "prompts/etapa-01-analise-360.md",
     saida: "01-prompt-analise-360.md",
     descricao:
-      "O raio-x completo da obra em 7 dimensões — da produção à recepção. Comece por aqui, em uma conversa nova com a IA.",
+      "O raio-x completo da obra em 7 dimensões — da produção à recepção — numa única resposta. Prefere mais profundidade por dimensão? Use 1A + 1B no lugar desta.",
+    extras: [],
+  },
+  {
+    id: "1a",
+    rotulo: "Etapa 1A",
+    nome: "Texto (1º tempo)",
+    arquivo: "prompts/etapa-01a-analise-texto.md",
+    saida: "01a-prompt-analise-360-texto.md",
+    descricao:
+      "Alternativa em dois tempos à Etapa 1: só o texto da obra — narrativa, imagem, som e montagem (dimensões 2 a 5). Continue com a 1B na mesma conversa.",
+    extras: [],
+  },
+  {
+    id: "1b",
+    rotulo: "Etapa 1B",
+    nome: "Contexto (2º tempo)",
+    arquivo: "prompts/etapa-01b-analise-contexto.md",
+    saida: "01b-prompt-analise-360-contexto.md",
+    descricao:
+      "Segundo tempo: produção, sociocultural e recepção (dimensões 1, 6 e 7), conectados ao texto — e a tabela-resumo completa das 7 dimensões.",
+    extras: [],
   },
   {
     id: "2.1",
@@ -50,6 +110,7 @@ const ETAPAS = [
     saida: "02.1-prompt-proposta-aprofundamento.md",
     descricao:
       "Na mesma conversa, a IA propõe de 3 a 5 perguntas analíticas. Escolha uma (ou formule a sua) para a próxima etapa.",
+    extras: [],
   },
   {
     id: "2.2",
@@ -59,6 +120,17 @@ const ETAPAS = [
     saida: "02.2-prompt-analise-focada.md",
     descricao:
       "Mergulho na pergunta escolhida: tese, evidências, contra-argumento e contexto. Pode repetir com outras perguntas da lista.",
+    extras: ["PERGUNTA_ESCOLHIDA"],
+  },
+  {
+    id: "2.3",
+    rotulo: "Etapa 2.3",
+    nome: "Close reading",
+    arquivo: "prompts/etapa-02.3-close-reading.md",
+    saida: "02.3-prompt-close-reading.md",
+    descricao:
+      "Opcional: uma única sequência dissecada plano a plano — decupagem, mise-en-scène, som, montagem e o sentido que a forma constrói.",
+    extras: ["SEQUENCIA_ESCOLHIDA"],
   },
   {
     id: "3",
@@ -67,15 +139,23 @@ const ETAPAS = [
     arquivo: "prompts/etapa-03-sintese-conexoes.md",
     saida: "03-prompt-sintese-conexoes.md",
     descricao:
-      "Fechamento do ciclo: síntese, balanço crítico, obras em diálogo, reflexões, fontes e a ficha-resumo da análise.",
+      "Fechamento do ciclo: síntese, balanço crítico, obras em diálogo, reflexões (com o antes/depois da sua leitura), fontes e a ficha-resumo.",
+    extras: [],
   },
 ];
 
 const EXEMPLO = {
   titulo: "Cidade de Deus (2002)",
   diretor: "Fernando Meirelles e Kátia Lund",
+  tipo: "Filme (longa-metragem de ficção)",
+  objetivo: "Estudar a fundo um clássico do cinema brasileiro",
+  nivel: "Intermediário — leio críticas e quero aprofundar a técnica",
+  impressoes:
+    "Na primeira vez que vi, achei a violência espetacularizada demais, quase um videoclipe. Hoje desconfio que a forma acelerada é justamente o tema — mas ainda não sei dizer se o filme critica ou celebra esse mundo.",
   pergunta:
     "De que forma a montagem acelerada e fragmentada, combinada à narração em off de Buscapé, transforma a violência em espetáculo — e como o filme lida com a tensão ética entre estetizar essa violência e, ao mesmo tempo, criticá-la?",
+  sequencia:
+    "A abertura completa: a faca sendo amolada, a fuga e a perseguição ao frango, até o plano em que Buscapé fica preso entre o bando de Zé Pequeno e a polícia (≈0:00–3:30)",
 };
 
 const CHAVE_STORAGE = "fluxo-ui-v1";
@@ -83,7 +163,7 @@ const CHAVE_STORAGE = "fluxo-ui-v1";
 /* ---------------- Estado e elementos ---------------- */
 
 const estado = {
-  etapaAtual: "1",
+  etapaAtual: "0",
   templates: {},
   carregado: false,
   editadoManualmente: false,
@@ -92,10 +172,10 @@ const estado = {
 
 const el = {};
 [
-  "titulo", "diretor", "pergunta", "saida", "stepper", "etapa-desc",
-  "campo-pergunta", "contador", "pendencias", "dica-edicao", "aviso-erro",
-  "toast", "btn-copiar", "btn-baixar", "btn-exemplo", "btn-limpar",
-  "btn-regenerar",
+  ...IDS_CAMPOS,
+  "saida", "stepper", "etapa-desc", "contador", "pendencias", "dica-edicao",
+  "aviso-erro", "toast", "btn-copiar", "btn-baixar", "btn-exemplo",
+  "btn-limpar", "btn-regenerar",
 ].forEach((id) => { el[id] = document.getElementById(id); });
 
 /* ---------------- Núcleo (mesma lógica da CLI) ---------------- */
@@ -132,6 +212,18 @@ function montarPrompt() {
   return { texto, pendentes };
 }
 
+/* Quais campos extras a etapa atual precisa?
+   Derivados do próprio template (fonte única); antes do carregamento,
+   vale a lista `extras` da configuração. */
+function camposExtrasVisiveis() {
+  const etapa = etapaAtual();
+  const template = estado.templates[etapa.id];
+  if (!template) return etapa.extras || [];
+  return Object.keys(CAMPOS).filter((chave) =>
+    new RegExp("\\{\\{\\s*" + chave + "\\s*\\}\\}").test(template)
+  );
+}
+
 /* ---------------- Renderização ---------------- */
 
 function atualizarMeta(montado) {
@@ -163,7 +255,11 @@ function atualizarMeta(montado) {
 function render() {
   const etapa = etapaAtual();
   el["etapa-desc"].textContent = etapa.descricao;
-  el["campo-pergunta"].hidden = etapa.id !== "2.2";
+
+  const visiveis = camposExtrasVisiveis();
+  document.querySelectorAll("[data-campo]").forEach((div) => {
+    div.hidden = !visiveis.includes(div.dataset.campo);
+  });
 
   document.querySelectorAll(".passo").forEach((btn) => {
     const id = btn.dataset.etapa;
@@ -206,13 +302,12 @@ function construirStepper() {
 
 function salvar() {
   try {
-    localStorage.setItem(CHAVE_STORAGE, JSON.stringify({
-      titulo: el.titulo.value,
-      diretor: el.diretor.value,
-      pergunta: el.pergunta.value,
+    const dados = {
       etapaAtual: estado.etapaAtual,
       copiadas: Array.from(estado.copiadas),
-    }));
+    };
+    IDS_CAMPOS.forEach((id) => { dados[id] = el[id] ? el[id].value : ""; });
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(dados));
   } catch (_e) { /* navegador sem storage: segue o jogo */ }
 }
 
@@ -221,9 +316,9 @@ function restaurar() {
     const bruto = localStorage.getItem(CHAVE_STORAGE);
     if (!bruto) return;
     const dados = JSON.parse(bruto);
-    if (dados.titulo) el.titulo.value = dados.titulo;
-    if (dados.diretor) el.diretor.value = dados.diretor;
-    if (dados.pergunta) el.pergunta.value = dados.pergunta;
+    IDS_CAMPOS.forEach((id) => {
+      if (dados[id] && el[id]) el[id].value = dados[id];
+    });
     if (ETAPAS.some((e) => e.id === dados.etapaAtual)) {
       estado.etapaAtual = dados.etapaAtual;
     }
@@ -316,7 +411,8 @@ async function carregarTemplates() {
 
 /* ---------------- Eventos e inicialização ---------------- */
 
-["titulo", "diretor", "pergunta"].forEach((id) => {
+IDS_CAMPOS.forEach((id) => {
+  if (!el[id]) return;
   el[id].addEventListener("input", () => {
     salvar();
     render();
@@ -339,9 +435,9 @@ el["btn-regenerar"].addEventListener("click", () => {
 });
 
 el["btn-exemplo"].addEventListener("click", () => {
-  el.titulo.value = EXEMPLO.titulo;
-  el.diretor.value = EXEMPLO.diretor;
-  el.pergunta.value = EXEMPLO.pergunta;
+  IDS_CAMPOS.forEach((id) => {
+    if (el[id] && EXEMPLO[id]) el[id].value = EXEMPLO[id];
+  });
   estado.editadoManualmente = false;
   salvar();
   render();
@@ -349,11 +445,9 @@ el["btn-exemplo"].addEventListener("click", () => {
 });
 
 el["btn-limpar"].addEventListener("click", () => {
-  el.titulo.value = "";
-  el.diretor.value = "";
-  el.pergunta.value = "";
+  IDS_CAMPOS.forEach((id) => { if (el[id]) el[id].value = ""; });
   estado.copiadas.clear();
-  estado.etapaAtual = "1";
+  estado.etapaAtual = "0";
   estado.editadoManualmente = false;
   try { localStorage.removeItem(CHAVE_STORAGE); } catch (_e) { /* ok */ }
   render();

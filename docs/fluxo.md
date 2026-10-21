@@ -1,35 +1,57 @@
 # Guia Completo do Fluxo
 
-O **Fluxo** é um roteiro de prompts em 3 etapas para dissecar filmes e séries
-com a ajuda de uma IA (Claude, ChatGPT, Gemini etc.). Em vez de pedir "me fale
-sobre esse filme" e receber um resumo genérico, o fluxo conduz uma análise
-progressiva: primeiro um **mapa completo** da obra, depois um **mergulho
-profundo** no ponto mais interessante, e por fim uma **síntese** que conecta
-tudo e aponta os próximos passos.
+O **Fluxo** é um roteiro de prompts para dissecar filmes e séries com a ajuda
+de uma IA (Claude, ChatGPT, Gemini etc.). Em vez de pedir "me fale sobre esse
+filme" e receber um resumo genérico, o fluxo conduz uma análise progressiva
+em três atos: uma **preparação** opcional que registra a sua hipótese, um
+**mapa completo** da obra, um **mergulho profundo** nos pontos mais
+interessantes e, por fim, uma **síntese** que conecta tudo e aponta os
+próximos passos.
 
 ---
 
-## 1. A lógica das 3 etapas
+## 1. A lógica do fluxo
 
 ```mermaid
 flowchart TD
-    A["<b>Etapa 1 · Análise 360°</b><br/>7 dimensões da produção à recepção"] --> B["<b>Etapa 2.1 · Proposta</b><br/>a IA sugere 3 a 5 perguntas analíticas"]
+    Z["<b>Etapa 0 · Preparação</b> (opcional)<br/>sua hipótese registrada antes da IA opinar"] --> A["<b>Etapa 1 · Análise 360°</b><br/>7 dimensões da produção à recepção"]
+    A --> B["<b>Etapa 2.1 · Proposta</b><br/>a IA sugere 3 a 5 perguntas analíticas"]
+    A -.-> A1["<i>Alternativa em 2 tempos:</i><br/><b>1A Texto</b> → <b>1B Contexto</b>"]
     B --> C{"Você escolhe<br/>1 pergunta"}
-    C --> D["<b>Etapa 2.2 · Análise focada</b><br/>tese → evidências → análise → contexto"]
+    C --> D["<b>Etapa 2.2 · Análise focada</b><br/>tese → evidências → contra-argumento → contexto"]
     D -->|"quer explorar outra pergunta?"| C
-    D --> E["<b>Etapa 3 · Síntese e conexões</b><br/>legado, diálogos, reflexões e fontes"]
+    D --> D3["<b>Etapa 2.3 · Close reading</b> (opcional)<br/>uma sequência, plano a plano"]
+    D3 --> E["<b>Etapa 3 · Síntese e conexões</b><br/>inclui revisitar sua hipótese inicial"]
+    D --> E
 ```
 
 | Etapa | Papel no fluxo | Analogia |
 | ----- | -------------- | -------- |
+| **0 — Preparação** *(opcional)* | Registrar **sua** leitura antes da IA: hipótese, objetivo, nível | A anamnese |
 | **1 — Análise 360°** | Mapear tudo: narrativa, imagem, som, montagem, contexto e legado | O raio-x |
+| **1A + 1B** *(alternativa)* | O mesmo raio-x em dois tempos: primeiro o texto, depois o contexto | Raio-x em duas sessões |
 | **2.1 — Proposta** | Identificar onde estão as questões mais ricas | Escolher onde operar |
 | **2.2 — Análise focada** | Construir um argumento denso sobre uma única questão | A cirurgia |
-| **3 — Síntese** | Consolidar, conectar com outras obras e indicar leituras | A alta com recomendações |
+| **2.3 — Close reading** *(opcional)* | Dissecar uma sequência plano a plano | A biópsia |
+| **3 — Síntese** | Consolidar, julgar, conectar com outras obras e indicar leituras | A alta com recomendações |
 
-**Regra de ouro:** rode as 3 etapas **na mesma conversa**, em ordem. Cada
+**Regra de ouro:** rode as etapas **na mesma conversa**, em ordem. Cada
 prompt foi escrito pressupondo o que a IA já disse antes ("Com base no que foi
 levantado...", "Para consolidar todo o conhecimento gerado...").
+
+### Antes do raio-x: a Etapa 0 (preparação)
+
+A [Etapa 0](../prompts/etapa-00-preparacao.md) é opcional, mas muda a
+qualidade de tudo o que vem depois. Nela, você declara **tipo da obra,
+objetivo, nível e — principalmente — suas impressões e hipótese iniciais**.
+A IA apenas: (1) confirma que identificou a obra certa (adeus, análise do
+remake errado); (2) registra sua hipótese **sem julgá-la**; (3) sugere pontos
+de atenção para assistir/reassistir; e (4) calibra a conversa ao seu nível.
+
+Por que registrar a hipótese antes? Porque, sem isso, a leitura da IA
+"ancora" a sua — no fim, você acha que sempre pensou daquele jeito. Com o
+registro, a Etapa 3 vira um **antes/depois honesto** da sua própria
+interpretação, que é o maior aprendizado do fluxo.
 
 ---
 
@@ -54,6 +76,21 @@ história e ignorar forma (imagem/som/montagem) e contexto (produção/sociedade
 **O que esperar da resposta:** um texto longo e estruturado. Se alguma dimensão
 vier superficial, peça expansão pontual antes de seguir:
 *"Aprofunde a dimensão 4 (Som) com exemplos de cenas específicas."*
+
+### Alternativa em dois tempos: 1A (texto) + 1B (contexto)
+
+Se a resposta da Etapa 1 vier truncada ou rala nas últimas dimensões — comum
+em obras densas e em séries —, divida o raio-x em dois tempos, **no lugar**
+da Etapa 1 (nunca junto dela):
+
+- **[1A — O Texto](../prompts/etapa-01a-analise-texto.md)**: dimensões 2 a 5
+  (narrativa, imagem, som, montagem), fechando com uma tabela-resumo parcial;
+- **[1B — O Contexto](../prompts/etapa-01b-analise-contexto.md)**: dimensões
+  1, 6 e 7 (produção, sociocultural, recepção), conectadas aos achados da 1A
+  e com a **tabela-resumo completa das 7 dimensões** no fim.
+
+A numeração das dimensões é a mesma nos dois caminhos — registro e etapas
+seguintes funcionam igual.
 
 ---
 
@@ -89,6 +126,21 @@ apresentar o contra-argumento mais forte à própria tese — conteste a respost
 traga um contraexemplo seu e observe a tese se refinar (ou ruir). É aqui que a
 análise deixa de ser descritiva e vira crítica de verdade.
 
+### 2.3 Close reading — uma sequência sob a lupa (opcional)
+
+A [Etapa 2.3](../prompts/etapa-02.3-close-reading.md) troca o panorama pelo
+microscópio: você escolhe **uma sequência** (a abertura, o clímax, uma
+virada) e a IA a disseca **plano a plano** — decupagem, mise-en-scène e som
+por plano, ritmo interno e, por fim, o sentido que a forma constrói. É o
+método clássico da análise fílmica: provar no detalhe aquilo que as etapas
+anteriores afirmaram no geral, tratando a sequência como **microcosmo** da
+obra inteira.
+
+Dois cuidados: reassista à sequência antes (dedo no pause) e confira a
+decupagem plano a plano — é aqui que as IAs mais inventam microdetalhes com
+ar de certeza. Discordar com evidência ("na verdade é um plano aberto") faz
+parte do exercício.
+
 ---
 
 ## 4. Etapa 3 — síntese, conexões e próximos passos
@@ -100,11 +152,12 @@ A etapa final ([template](../prompts/etapa-03-sintese-conexoes.md)) entrega:
 3. **Balanço Crítico** — julgamento fundamentado, nos termos da própria obra:
    onde é exemplar, onde falha, para quem funciona;
 4. **Diálogos audiovisuais** — 2 ou 3 obras para assistir em seguida e por quê;
-5. **Perguntas para reflexão pessoal** — a obra espelhada em você e no presente;
+5. **Perguntas para reflexão pessoal** — a obra espelhada em você e no
+   presente, incluindo o confronto com a sua hipótese da Etapa 0;
 6. **Crítica, teoria e bastidores** — fontes reais para continuar estudando
    (só as de existência confiável; o resto vem marcado "a confirmar");
-7. **Ficha-resumo** — tese, achados e próxima obra em tópicos, pronta para
-   salvar nas suas notas.
+7. **Ficha-resumo** — tese, achados, o antes/depois da sua leitura e a
+   próxima obra em tópicos, pronta para salvar nas suas notas.
 
 Guarde essa resposta: ela é o "relatório final" da análise. A CLI gera um
 [`registro.md`](../templates/registro-de-analise.md) com espaço para colar e
@@ -189,3 +242,14 @@ placeholders `{{ASSIM}}` para a CLI continuar funcionando.
 **Funciona com qualquer IA?**
 Sim — os prompts são texto puro. Modelos com contexto maior lidam melhor com
 as respostas longas da Etapa 1.
+
+**A Etapa 0 é obrigatória?**
+Não — mas é barata e muda o jogo: leva dois minutos, evita analisar a obra
+errada (remakes/homônimos) e guarda a sua leitura "pura" para o confronto
+da Etapa 3. Se já conhece a obra de cor e só quer o mapa, pule para a Etapa 1.
+
+**Etapa 1 inteira ou 1A + 1B?**
+A Etapa 1 é mais rápida e basta para a maioria dos Casos. Use os dois tempos
+quando a obra for densa ou longa (séries!), quando a resposta única vier
+truncada ou rala nas últimas dimensões, ou quando quiser o máximo de
+profundidade por dimensão. Não use os dois caminhos na mesma análise.

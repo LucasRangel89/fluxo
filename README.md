@@ -4,7 +4,7 @@
 
 ![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
-![Versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-green)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-0.4.0-green)
 
 Um **fluxo de prompts especializado em 3 etapas** para dissecar filmes e
 séries com a ajuda de uma IA (Claude, ChatGPT, Gemini etc.) — em suas camadas
@@ -13,14 +13,17 @@ fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
 
 ---
 
-## O fluxo em 3 etapas
+## O fluxo (três atos, com preparação e variações)
 
 | Etapa | O que faz | Template | Comando |
 | ----- | --------- | -------- | ------- |
+| **0 · Preparação** *(opcional)* | Identifica a obra, calibra seu objetivo/nível e **registra sua hipótese antes de a IA opinar** — revisitada na Etapa 3 | [`etapa-00`](prompts/etapa-00-preparacao.md) | `fluxo gerar 0` |
 | **1 · Análise Audiovisual 360°** | "Raio-x" da obra em **7 dimensões**: contexto de produção, narrativa, imagem, som, montagem, sociocultural e recepção | [`etapa-01`](prompts/etapa-01-analise-360.md) | `fluxo gerar 1` |
+| **1A + 1B · 360° em dois tempos** *(alternativa à Etapa 1)* | O mesmo raio-x dividido: **Texto** (narrativa, imagem, som, montagem) → **Contexto** (produção, sociocultural, recepção), fechando com a tabela completa das 7 dimensões | [`etapa-01a`](prompts/etapa-01a-analise-texto.md) · [`etapa-01b`](prompts/etapa-01b-analise-contexto.md) | `fluxo gerar 1a` / `1b` |
 | **2.1 · Proposta de Aprofundamento** | A IA propõe de **3 a 5 perguntas analíticas** com base no mapa da Etapa 1 — você escolhe uma | [`etapa-02.1`](prompts/etapa-02.1-proposta-aprofundamento.md) | `fluxo gerar 2.1` |
 | **2.2 · Análise Focada** | Mergulho na pergunta escolhida: **tese → evidências → análise → contexto** | [`etapa-02.2`](prompts/etapa-02.2-analise-focada.md) | `fluxo gerar 2.2` |
-| **3 · Síntese e Conexões** | Consolida os insights, sugere **obras em diálogo**, perguntas de reflexão e **fontes** (crítica, teoria e bastidores) | [`etapa-03`](prompts/etapa-03-sintese-conexoes.md) | `fluxo gerar 3` |
+| **2.3 · Close Reading** *(opcional)* | **Uma sequência dissecada plano a plano**: decupagem, mise-en-scène, som, montagem e o sentido construído pela forma | [`etapa-02.3`](prompts/etapa-02.3-close-reading.md) | `fluxo gerar 2.3` |
+| **3 · Síntese e Conexões** | Consolida os insights, julga a obra (balanço crítico), sugere **obras em diálogo**, perguntas de reflexão — incluindo o **antes/depois da sua leitura** — e **fontes** | [`etapa-03`](prompts/etapa-03-sintese-conexoes.md) | `fluxo gerar 3` |
 
 > 📖 **Guia completo:** [docs/fluxo.md](docs/fluxo.md) — lógica de cada etapa,
 > as 7 dimensões explicadas, adaptações para séries/documentários, boas
@@ -64,7 +67,12 @@ pip install -e .
 # Veja as etapas e o que cada uma requer
 fluxo listar
 
-# Etapa 1 — Análise 360°
+# Etapa 0 (opcional) — preparação: sua hipótese registrada antes da IA opinar
+fluxo gerar 0 --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kátia Lund" \
+  --tipo "Filme" --objetivo "Estudar um clássico" --nivel "Intermediário" \
+  --impressoes "Achei a violência espetacularizada demais; quero testar essa impressão."
+
+# Etapa 1 — Análise 360° (alternativa em dois tempos: `gerar 1a`, depois `gerar 1b`)
 fluxo gerar 1 --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kátia Lund"
 
 # Etapa 2.1 — proposta de perguntas
@@ -73,14 +81,17 @@ fluxo gerar 2.1 --titulo "Cidade de Deus (2002)"
 # Etapa 2.2 — cole aqui a pergunta escolhida
 fluxo gerar 2.2 --pergunta "Como a montagem acelerada transforma a violência em espetáculo...?"
 
+# Etapa 2.3 (opcional) — close reading de uma sequência
+fluxo gerar 2.3 --titulo "Cidade de Deus (2002)" --sequencia "A abertura: perseguição ao frango (≈0:00–3:30)"
+
 # Etapa 3 — síntese final, já copiada para a área de transferência
 fluxo gerar 3 --titulo "Cidade de Deus (2002)" --copiar
 ```
 
 Sem instalar, direto da raiz do repo: `PYTHONPATH=src python -m fluxo listar`.
 
-**Atalho:** crie de uma vez a pasta da análise com os 4 prompts + um registro
-para suas anotações:
+**Atalho:** crie de uma vez a pasta da análise com os prompts de todas as
+etapas + um registro para suas anotações:
 
 ```bash
 fluxo novo --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kátia Lund"
@@ -92,8 +103,8 @@ fluxo novo --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kát
 | Comando | Descrição |
 | ------- | --------- |
 | `fluxo listar` | Lista as etapas e os dados que cada uma requer |
-| `fluxo gerar <etapa>` | Gera o prompt da etapa (`1`, `2.1`, `2.2`, `3`). Flags: `--titulo`, `--diretor`, `--pergunta`, `--salvar arquivo`, `--copiar` |
-| `fluxo novo --titulo "..."` | Cria `analises/<slug>/` com os 4 prompts preenchidos e um `registro.md`. Flags: `--diretor`, `--pergunta`, `--slug`, `--destino`, `--forcar` |
+| `fluxo gerar <etapa>` | Gera o prompt da etapa (`0`, `1`, `1a`, `1b`, `2.1`, `2.2`, `2.3`, `3`). Flags: `--titulo`, `--diretor`, `--tipo`, `--objetivo`, `--nivel`, `--impressoes`, `--pergunta`, `--sequencia`, `--salvar arquivo`, `--copiar` |
+| `fluxo novo --titulo "..."` | Cria `analises/<slug>/` com os prompts de **todas as etapas** e um `registro.md`. Aceita as mesmas flags do `gerar`, mais `--slug`, `--destino`, `--forcar` |
 | `fluxo --versao` | Mostra a versão |
 
 ---
@@ -101,8 +112,7 @@ fluxo novo --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kát
 ## Exemplo
 
 Em [`exemplos/cidade-de-deus/`](exemplos/cidade-de-deus) você encontra o fluxo
-completo já preenchido para **Cidade de Deus (2002)** — os 4 prompts prontos
-para colar, um exemplo de perguntas que a Etapa 2.1 costuma gerar e o registro
+completo já preenchido para **Cidade de Deus (2002)** — os prompts das 8 etapas prontos para colar, um exemplo de perguntas que a Etapa 2.1 costuma gerar e o registro
 da análise.
 
 ---
@@ -116,9 +126,13 @@ fluxo/
 ├── docs/
 │   └── fluxo.md                   # Guia completo do fluxo
 ├── prompts/                       # ★ Os templates das etapas (fonte da verdade)
+│   ├── etapa-00-preparacao.md
 │   ├── etapa-01-analise-360.md
+│   ├── etapa-01a-analise-texto.md
+│   ├── etapa-01b-analise-contexto.md
 │   ├── etapa-02.1-proposta-aprofundamento.md
 │   ├── etapa-02.2-analise-focada.md
+│   ├── etapa-02.3-close-reading.md
 │   └── etapa-03-sintese-conexoes.md
 ├── templates/
 │   └── registro-de-analise.md     # Modelo para registrar os achados
@@ -150,7 +164,7 @@ O projeto está evoluindo em fases, a partir de uma
   saída estruturado, contra-argumento na Etapa 2.2 e novos subitens teóricos
   (atuação, autoria, gênero, espectador)
 - [x] **Fase 2 — UI web**: página estática para montar e copiar os prompts sem terminal
-- [ ] **Fase 3 — Estrutura**: Etapa 0 (setup + sua hipótese), Etapa 1 em dois tempos, close reading (2.3)
+- [x] **Fase 3 — Estrutura**: Etapa 0 (setup + sua hipótese), Etapa 1 em dois tempos, close reading (2.3)
 - [ ] **Fase 4 — Variantes e base**: séries, análise comparativa, modos
   iniciante × acadêmico, CLI interativa e empacotamento dos prompts
 

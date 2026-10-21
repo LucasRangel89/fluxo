@@ -23,7 +23,12 @@ _RE_PLACEHOLDER = re.compile(r"\{\{\s*([A-Z0-9_]+)\s*\}\}")
 PLACEHOLDERS: dict[str, tuple[str, str | None]] = {
     "TITULO_DA_OBRA": ("título do filme/série", "--titulo"),
     "DIRETOR_OU_CRIADOR": ("nome do diretor(a)/criador(a)", "--diretor"),
+    "TIPO_DE_OBRA": ("tipo da obra (filme, série/temporada, episódio...)", "--tipo"),
+    "META_DA_ANALISE": ("seu objetivo com a análise", "--objetivo"),
+    "NIVEL_DO_USUARIO": ("seu nível de familiaridade com análise", "--nivel"),
+    "IMPRESSOES_INICIAIS": ("suas impressões/hipóteses iniciais", "--impressoes"),
     "PERGUNTA_ESCOLHIDA": ("pergunta escolhida na Etapa 2.1", "--pergunta"),
+    "SEQUENCIA_ESCOLHIDA": ("sequência escolhida para o close reading", "--sequencia"),
     "DATA_DA_ANALISE": ("data da análise", None),
 }
 
@@ -48,11 +53,47 @@ ETAPAS: dict[str, Etapa] = {
     etapa.id: etapa
     for etapa in (
         Etapa(
+            id="0",
+            nome="Preparação",
+            arquivo_template="etapa-00-preparacao.md",
+            arquivo_saida="00-prompt-preparacao.md",
+            descricao=(
+                "Setup opcional: identifica a obra, registra a sua hipótese "
+                "antes da IA opinar e calibra objetivo/nível."
+            ),
+            obrigatorios=(
+                "TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR", "TIPO_DE_OBRA",
+                "META_DA_ANALISE", "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS",
+            ),
+        ),
+        Etapa(
             id="1",
             nome="Análise Audiovisual 360°",
             arquivo_template="etapa-01-analise-360.md",
             arquivo_saida="01-prompt-analise-360.md",
-            descricao="Raio-x completo da obra em 7 dimensões críticas.",
+            descricao="Raio-x completo da obra em 7 dimensões críticas, de uma vez.",
+            obrigatorios=("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"),
+        ),
+        Etapa(
+            id="1a",
+            nome="Análise 360° — O Texto (1º tempo)",
+            arquivo_template="etapa-01a-analise-texto.md",
+            arquivo_saida="01a-prompt-analise-360-texto.md",
+            descricao=(
+                "Alternativa à Etapa 1 em dois tempos: dimensões 2 a 5 "
+                "(narrativa, imagem, som e montagem)."
+            ),
+            obrigatorios=("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"),
+        ),
+        Etapa(
+            id="1b",
+            nome="Análise 360° — O Contexto (2º tempo)",
+            arquivo_template="etapa-01b-analise-contexto.md",
+            arquivo_saida="01b-prompt-analise-360-contexto.md",
+            descricao=(
+                "Segundo tempo: dimensões 1, 6 e 7 (produção, sociocultural e "
+                "recepção) + tabela-resumo completa das 7."
+            ),
             obrigatorios=("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"),
         ),
         Etapa(
@@ -68,32 +109,57 @@ ETAPAS: dict[str, Etapa] = {
             nome="Execução da Análise Focada",
             arquivo_template="etapa-02.2-analise-focada.md",
             arquivo_saida="02.2-prompt-analise-focada.md",
-            descricao="Análise densa da pergunta escolhida: tese, evidências e contexto.",
+            descricao=(
+                "Análise densa da pergunta escolhida: tese, evidências, "
+                "contra-argumento e contexto."
+            ),
             obrigatorios=("PERGUNTA_ESCOLHIDA",),
+        ),
+        Etapa(
+            id="2.3",
+            nome="Close Reading de uma Sequência",
+            arquivo_template="etapa-02.3-close-reading.md",
+            arquivo_saida="02.3-prompt-close-reading.md",
+            descricao=(
+                "Opcional: disseca uma sequência plano a plano — decupagem, "
+                "mise-en-scène, montagem e sentido."
+            ),
+            obrigatorios=("TITULO_DA_OBRA", "SEQUENCIA_ESCOLHIDA"),
         ),
         Etapa(
             id="3",
             nome="Consolidação, Diálogos e Expansão",
             arquivo_template="etapa-03-sintese-conexoes.md",
             arquivo_saida="03-prompt-sintese-conexoes.md",
-            descricao="Síntese final, obras em diálogo, reflexões e fontes para expandir.",
+            descricao=(
+                "Síntese final, balanço crítico, obras em diálogo, reflexões "
+                "(incl. sua hipótese inicial) e fontes."
+            ),
             obrigatorios=("TITULO_DA_OBRA",),
         ),
     )
 }
 
 _ALIASES: dict[str, str] = {
+    "0": "0", "00": "0", "e0": "0", "etapa0": "0", "etapa-0": "0",
+    "etapa00": "0", "etapa-00": "0", "setup": "0", "preparacao": "0",
     "1": "1", "01": "1", "e1": "1", "etapa1": "1", "etapa-1": "1",
     "etapa01": "1", "etapa-01": "1",
+    "1a": "1a", "01a": "1a", "1-a": "1a", "e1a": "1a", "etapa1a": "1a",
+    "etapa-1a": "1a", "texto": "1a",
+    "1b": "1b", "01b": "1b", "1-b": "1b", "e1b": "1b", "etapa1b": "1b",
+    "etapa-1b": "1b", "contexto": "1b",
     "2.1": "2.1", "21": "2.1", "2-1": "2.1", "etapa2.1": "2.1", "etapa-2.1": "2.1",
     "2.2": "2.2", "22": "2.2", "2-2": "2.2", "etapa2.2": "2.2", "etapa-2.2": "2.2",
+    "2.3": "2.3", "23": "2.3", "2-3": "2.3", "etapa2.3": "2.3", "etapa-2.3": "2.3",
+    "close-reading": "2.3", "closereading": "2.3", "close": "2.3",
     "3": "3", "03": "3", "e3": "3", "etapa3": "3", "etapa-3": "3",
     "etapa03": "3", "etapa-03": "3",
 }
 
 
 def normalizar_etapa(entrada: str) -> str:
-    """Aceita variações como ``01``, ``etapa-2.1`` ou ``22`` e devolve o id canônico."""
+    """Aceita variações como ``00``, ``etapa-1a`` ou ``close`` e devolve o id canônico."""
     chave = entrada.strip().lower().replace(" ", "")
     try:
         return _ALIASES[chave]

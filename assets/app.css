@@ -84,7 +84,7 @@ h1 span {
 
 .campo label { display: block; font-weight: 600; margin-bottom: 6px; }
 .campo small { color: var(--texto-suave); display: block; margin-top: 6px; }
-#campo-pergunta { margin-top: 16px; }
+.campo-extra { margin-top: 16px; }
 
 input[type="text"],
 textarea {

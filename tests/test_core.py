@@ -15,7 +15,12 @@ from fluxo.core import (
 VALORES = {
     "TITULO_DA_OBRA": "Cidade de Deus (2002)",
     "DIRETOR_OU_CRIADOR": "Fernando Meirelles e Kátia Lund",
+    "TIPO_DE_OBRA": "Filme (longa-metragem de ficção)",
+    "META_DA_ANALISE": "Estudar um clássico brasileiro",
+    "NIVEL_DO_USUARIO": "Intermediário",
+    "IMPRESSOES_INICIAIS": "Achei a violência espetacularizada demais.",
     "PERGUNTA_ESCOLHIDA": "Como a montagem constrói o ciclo de violência?",
+    "SEQUENCIA_ESCOLHIDA": "A abertura: perseguição ao frango (≈0:00–3:30)",
 }
 
 

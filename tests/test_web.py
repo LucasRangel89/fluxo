@@ -25,8 +25,9 @@ class TestInterfaceWeb(unittest.TestCase):
         self.assertIn("assets/app.css", self.index)
         self.assertIn("assets/app.js", self.index)
         for campo in (
-            'id="titulo"', 'id="diretor"', 'id="pergunta"',
-            'id="saida"', 'id="stepper"',
+            'id="titulo"', 'id="diretor"', 'id="tipo"', 'id="objetivo"',
+            'id="nivel"', 'id="impressoes"', 'id="pergunta"',
+            'id="sequencia"', 'id="saida"', 'id="stepper"',
         ):
             with self.subTest(campo=campo):
                 self.assertIn(campo, self.index)
@@ -42,10 +43,11 @@ class TestInterfaceWeb(unittest.TestCase):
     def test_js_usa_os_mesmos_marcadores_e_placeholders(self):
         self.assertIn(MARCADOR_INICIO, self.js)
         self.assertIn(MARCADOR_FIM, self.js)
-        for chave in ("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR", "PERGUNTA_ESCOLHIDA"):
+        for chave in PLACEHOLDERS:
+            if chave == "DATA_DA_ANALISE":
+                continue  # só existe no template de registro, fora da UI
             with self.subTest(placeholder=chave):
                 self.assertIn(chave, self.js)
-                self.assertIn(chave, PLACEHOLDERS)
 
     def test_versao_exibida_confere_com_o_pacote(self):
         self.assertIn(__version__, self.index)

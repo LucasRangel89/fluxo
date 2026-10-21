@@ -15,6 +15,14 @@ anti-alucinação que valem para a conversa inteira: a IA deve marcar fatos
 incertos com "(a confirmar)", separar fato de interpretação, desambiguar
 títulos e citar evidências com minutagem/episódio.
 
+**Alternativa em dois tempos:** se quiser mais profundidade por dimensão (ou
+se a resposta única vier truncada), use a
+[Etapa 1A — O Texto](etapa-01a-analise-texto.md) seguida da
+[Etapa 1B — O Contexto](etapa-01b-analise-contexto.md) **no lugar** desta
+etapa — juntas, cobrem as mesmas 7 dimensões. E para registrar sua hipótese
+antes de a IA opinar, comece pela
+[Etapa 0 — Preparação](etapa-00-preparacao.md).
+
 ## Placeholders
 
 | Placeholder               | O que é                          | Flag na CLI | Exemplo                               |

@@ -6,8 +6,8 @@
 > decisões tomadas estão na [seção 5](#5-decisões-registradas) e o plano de
 > execução na [seção 6](#6-plano-faseado-decidido).
 >
-> **Status:** Fases 1 (prompts v2) e 2 (UI web) implementadas em 2026-10-20;
-> Fases 3–4 planejadas.
+> **Status:** Fases 1 (prompts v2), 2 (UI web) e 3 (estrutura) implementadas
+> em 2026-10-20; Fase 4 planejada.
 
 ---
 
@@ -21,8 +21,9 @@ nenhuma blindagem nos prompts; **(b)** lacunas teóricas (atuação, autoria,
 gênero, especificidade das séries); **(c)** uma Etapa 1 monolítica que tende
 ao checklist superficial; e **(d)** uma barreira de adoção — sem interface, o
 público natural do projeto (cinéfilos, estudantes, professores) não chega ao
-conteúdo. Os itens (a), (b) (parcial) e (c) (parcial) foram tratados na
-Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
+conteúdo. Os itens (a) e (d) foram tratados nas Fases 1 e 2; (b) e (c)
+avançaram nas Fases 1 e 3. O que falta está concentrado na Fase 4 (variantes
+por tipo de obra e base técnica).
 
 ---
 
@@ -66,7 +67,8 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
    critérios ("funciona? nos seus próprios termos?").
    → *Tratado por P9 (Fase 1: Balanço Crítico na Etapa 3).*
 5. **Ancoragem:** o usuário só entra na Etapa 2.1; suas impressões iniciais
-   nunca são registradas antes do enquadramento da IA. → *P4 (Fase 3).*
+   nunca são registradas antes do enquadramento da IA.
+   → *Tratado por P4 (Fase 3: Etapa 0 registra a hipótese; a Etapa 3 a revisita).*
 6. **Sem modo comparativo** (duas obras) nem entrada "testar minha tese".
    → *P13 (Fase 4); a pergunta própria já é aceita na 2.1 desde a Fase 1.*
 
@@ -76,10 +78,11 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
    (fontes) e 1-dimensao-7 (bilheteria/prêmios) são justamente as mais
    factuais. **Maior risco prático do projeto.** → *Tratado por P1/P2 (Fase 1).*
 2. **Sem persona e sem desambiguação** (remakes/homônimos).
-   → *Tratado por P1/P2 (Fase 1).*
+   → *Tratado por P1/P2 (Fase 1); a desambiguação ganhou também a Etapa 0 (Fase 3).*
 3. **Etapa 1 monolítica:** respostas longas rareiam nas dimensões finais;
    risco de truncamento; sem cabeçalhos/orçamento por dimensão, difícil
-   referenciar e reler. → *Mitigado por P3 (Fase 1); solução estrutural em P5 (Fase 3).*
+   referenciar e reler.
+   → *Mitigado por P3 (Fase 1) e resolvido estruturalmente por P5 (Fase 3: 1A/1B).*
 4. **Priming pelos exemplos:** os "ex.:" podem ancorar rótulos indevidos.
    → *Mitigado por P11 (Fase 1: comprovar rótulos estruturais).*
 5. **2.1 autorreferente:** perguntas derivadas do texto da própria IA, sem
@@ -89,7 +92,8 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
    calibragem de evidências (minutagem, T1:E5). → *Tratado por P7/P3 (Fase 1).*
 7. **Sem personalização:** nível (iniciante × acadêmico), objetivo (estudo,
    resenha, aula) e profundidade não são variáveis — falta uma Etapa 0.
-   → *P4 (Fase 3) e P14 (Fase 4).*
+   → *P4 na Fase 3 (a Etapa 0 captura objetivo/nível e calibra a conversa);
+   modos formais em P14 (Fase 4).*
 8. **Base técnica:** CLI depende de localizar `prompts/` a partir do repo
    (quebra se instalada e usada em outra pasta); ausência de UI limita a
    adoção pelo público-alvo. → *UI tratada por P15 (Fase 2); P17 na Fase 4.*
@@ -108,12 +112,12 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
 ### Grupo B — Estrutura do fluxo
 | ID | Proposta | Impacto | Esforço | Status |
 |----|----------|---------|---------|--------|
-| P4 | **Etapa 0 (setup):** tipo de obra, objetivo e nível do usuário + registro das impressões/hipótese iniciais (revisitadas na Etapa 3) | Alto | Médio | 📅 Fase 3 |
-| P5 | Etapa 1 em dois tempos (1A: texto — narrativa/imagem/som/montagem; 1B: contexto — produção/sociocultural/recepção) ou módulos de aprofundamento por dimensão | Alto | Médio | 📅 Fase 3 |
+| P4 | **Etapa 0 (setup):** tipo de obra, objetivo e nível do usuário + registro das impressões/hipótese iniciais (revisitadas na Etapa 3) | Alto | Médio | ✅ Fase 3 |
+| P5 | Etapa 1 em dois tempos (1A: texto — narrativa/imagem/som/montagem; 1B: contexto — produção/sociocultural/recepção) ou módulos de aprofundamento por dimensão | Alto | Médio | ✅ Fase 3 (1A/1B como alternativa à Etapa 1) |
 | P6 | 2.1 com diversidade obrigatória (1 pergunta por tipo: forma, tema, ideologia/representação, autoria/comparação, recepção) + espaço oficial para pergunta do usuário | Médio | Baixo | ✅ Fase 1 |
 | P7 | 2.2 com contra-argumento ("advogado do diabo") e critério de falsificação da tese | Alto | Baixo | ✅ Fase 1 |
-| P8 | Nova etapa opcional **2.3 — Close reading** plano a plano de uma sequência | Médio | Médio | 📅 Fase 3 |
-| P9 | Fecho avaliativo na Etapa 3 (julgamento com critérios) + "sua leitura inicial mudou?" | Médio | Baixo | ✅ parcial (Fase 1: balanço crítico; revisita à hipótese depende de P4) |
+| P8 | Nova etapa opcional **2.3 — Close reading** plano a plano de uma sequência | Médio | Médio | ✅ Fase 3 |
+| P9 | Fecho avaliativo na Etapa 3 (julgamento com critérios) + "sua leitura inicial mudou?" | Médio | Baixo | ✅ Fase 1 (balanço crítico) + Fase 3 (revisita à hipótese) |
 
 ### Grupo C — Teoria e variantes
 | ID | Proposta | Impacto | Esforço | Status |
@@ -142,6 +146,7 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
 | 2026-10-20 | Teoria: **manter as 7 dimensões** e expandir com subitens explícitos (P10/P11) | Sem reformulação do mapa |
 | 2026-10-20 | **Fase 1 implementada** (P1, P2, P3, P6, P7, P9 parcial, P10, P11) → prompts v2 | Exemplo regenerado; repo v0.2.0 |
 | 2026-10-20 | **Fase 2 implementada**: UI web estática (P15) em `index.html` + `assets/` | Lê `prompts/` via fetch (fonte única); `.nojekyll` p/ GitHub Pages; testes anti-drift (`tests/test_web.py`); repo v0.3.0 |
+| 2026-10-20 | **Fase 3 implementada**: Etapa 0, 1A/1B em dois tempos, close reading 2.3 e revisita à hipótese (P4, P5, P8, P9 completo) | 1A/1B como **alternativa** à Etapa 1 (não substituição); UI deriva os campos dos placeholders do template; repo v0.4.0 |
 
 ## 6. Plano faseado (decidido)
 
@@ -154,9 +159,10 @@ Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
   experiência de uso mais cedo. A UI é orientada pelos templates de
   `prompts/`, absorvendo as novas etapas das fases seguintes sem retrabalho
   estrutural.
-- **Fase 3 — Estrutura do fluxo** (P4, P5, P8, restante de P9)
-  Etapa 0 com a hipótese do usuário, Etapa 1 em dois tempos (ou módulos),
-  close reading 2.3.
+- **Fase 3 — Estrutura do fluxo** (P4, P5, P8, restante de P9) ✅
+  Etapa 0 com a hipótese do usuário, Etapa 1 em dois tempos (1A/1B como
+  alternativa à Etapa 1 única), close reading 2.3 e a Etapa 3 revisitando a
+  hipótese inicial.
 - **Fase 4 — Variantes e base técnica** (P12, P13, P14, P16, P17)
   Séries, comparativa, modos de profundidade, CLI interativa e
   empacotamento dos prompts no pacote Python.

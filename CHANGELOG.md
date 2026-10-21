@@ -4,6 +4,41 @@ Todas as mudanças relevantes deste projeto serão documentadas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.4.0] — 2026-10-20
+
+### Adicionado
+- **Fase 3 do plano — estrutura do fluxo:**
+  - **Etapa 0 · Preparação** (`prompts/etapa-00-preparacao.md`): identifica a
+    obra sem ambiguidade, calibra tipo/objetivo/nível e **registra as
+    impressões e a hipótese do usuário antes de a IA opinar** (contra a
+    ancoragem), com pontos de atenção para assistir/reassistir;
+  - **Etapas 1A/1B** — a Análise 360° em dois tempos, como alternativa à
+    Etapa 1: **1A Texto** (dimensões 2–5) → **1B Contexto** (1, 6 e 7),
+    conectando o contexto aos achados formais e fechando com a tabela-resumo
+    completa das 7 dimensões;
+  - **Etapa 2.3 · Close Reading** (opcional): uma sequência dissecada plano a
+    plano — decupagem, mise-en-scène e som, ritmo interno e sentido;
+  - A Etapa 3 agora **revisita a hipótese inicial** registrada na Etapa 0
+    (o que se confirmou, o que caiu por terra), e a ficha-resumo registra o
+    antes/depois da leitura.
+- CLI: novas etapas `0`, `1a`, `1b` e `2.3` (com aliases como `setup`,
+  `texto`, `contexto`, `close`) e flags `--tipo`, `--objetivo`, `--nivel`,
+  `--impressoes` e `--sequencia`; o comando `novo` gera os 8 prompts.
+- Interface web: 8 etapas no stepper e **campos dinâmicos por etapa**
+  (derivados dos placeholders do próprio template); o exemplo embutido cobre
+  todos os campos e a etapa inicial passa a ser a 0 (Preparação).
+- Template de registro com seção da Etapa 0 (hipótese e pontos de atenção),
+  subitens novos nas dimensões, bloco de close reading e o confronto
+  "minha leitura inicial mudou?".
+- Exemplo *Cidade de Deus* regenerado com as 8 etapas — incluindo a hipótese
+  inicial e a sequência de abertura para o close reading.
+- Testes da Fase 3 (`tests/test_fase3.py`) e cobertura web estendida a todos
+  os placeholders.
+
+### Corrigido
+- Placeholder da Etapa 0 definido como `{{META_DA_ANALISE}}`, dentro do
+  padrão `{{MAIUSCULAS_COM_UNDERSCORE}}` que o motor reconhece.
+
 ## [0.3.0] — 2026-10-20
 
 ### Adicionado
