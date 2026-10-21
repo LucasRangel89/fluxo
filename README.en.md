@@ -4,7 +4,7 @@
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
-![Version](https://img.shields.io/badge/version-0.1.0-green)
+![Version](https://img.shields.io/badge/version-0.3.0-green)
 
 A **specialized 3-stage prompt flow** for dissecting films and series with the
 help of an AI (Claude, ChatGPT, Gemini, etc.) across their narrative,
@@ -37,7 +37,21 @@ prompt builds on what the AI said before.
 
 ## Quick start
 
-### Option A — copy & paste (no installation)
+### Option A — Web UI (recommended) 🌐
+
+The easiest way to use Fluxo: fill in the title and director, pick a stage and
+copy the ready-made prompt — no terminal, no placeholder hunting. It remembers
+your inputs in the browser, marks stages you've already copied and can
+download each prompt as `.md`.
+
+- **Run locally:** from the repo root, `python -m http.server 8000`, then open
+  `http://localhost:8000` (HTTP is required: the page reads the templates from
+  `prompts/` at runtime — the same source the CLI uses, no duplication).
+- **GitHub Pages:** *Settings → Pages → Deploy from a branch → `main`,
+  `/ (root)`*. The included `.nojekyll` file makes sure the templates are
+  served as-is.
+
+### Option B — copy & paste (no installation)
 
 1. Open [`prompts/etapa-01-analise-360.md`](prompts/etapa-01-analise-360.md);
 2. Copy the text between the `<!-- INICIO DO PROMPT -->` and
@@ -46,7 +60,7 @@ prompt builds on what the AI said before.
    (director/creator) placeholders and paste it into your favorite AI;
 4. Continue in the **same conversation** with stages 2.1, 2.2 and 3.
 
-### Option B — CLI (Python 3.9+, zero dependencies)
+### Option C — CLI (Python 3.9+, zero dependencies)
 
 ```bash
 # (on externally-managed Pythons — PEP 668 error — create a virtualenv first:
@@ -86,6 +100,7 @@ illustrative set of Stage 2.1 questions, and the analysis record.
 ```
 fluxo/
 ├── README.md / README.en.md       # This guide (PT-BR / English)
+├── index.html + assets/           # 🌐 Web UI (reads the templates from prompts/)
 ├── docs/fluxo.md                  # Full guide to the flow (PT-BR)
 ├── prompts/                       # ★ The stage templates (single source of truth)
 ├── templates/registro-de-analise.md
@@ -108,7 +123,7 @@ The project is evolving in phases, based on a
 - [x] **Phase 1 — Prompts v2**: critic persona and anti-hallucination rules,
   structured output format, built-in counterargument in Stage 2.2, new theory
   sub-items (performance, authorship, genre, spectator)
-- [ ] **Phase 2 — Web UI**: static page to build and copy prompts without a terminal
+- [x] **Phase 2 — Web UI**: static page to build and copy prompts without a terminal
 - [ ] **Phase 3 — Structure**: Stage 0 (setup + your own hypothesis), two-part
   Stage 1, close-reading stage (2.3)
 - [ ] **Phase 4 — Variants & plumbing**: series variant, comparative analysis,

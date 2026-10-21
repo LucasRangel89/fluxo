@@ -40,12 +40,12 @@ sete ângulos complementares:
 
 | # | Dimensão | O que ela investiga | Pergunta-guia |
 | - | -------- | ------------------- | ------------- |
-| 1 | **Ficha Técnica e Contexto de Produção** | Dados essenciais + o mundo em que a obra nasceu (indústria, história, tecnologia) | "De onde essa obra veio?" |
-| 2 | **Narrativa e Roteiro** | Estrutura (três atos, jornada do herói, não-linear), temas e arcos de personagens | "Que história é contada e como ela é construída?" |
-| 3 | **Linguagem Cinematográfica** | Fotografia, iluminação, paleta de cores, direção de arte, mise-en-scène | "Como a imagem conta a história?" |
+| 1 | **Ficha Técnica e Contexto de Produção** | Dados essenciais + o mundo em que a obra nasceu (indústria, história, tecnologia, modelo de distribuição e quem detém a autoria) | "De onde essa obra veio?" |
+| 2 | **Narrativa e Roteiro** | Estrutura real da obra (clássica ou não), gênero e convenções, focalização (quem vê/conta), temas e arcos de personagens | "Que história é contada e como ela é construída?" |
+| 3 | **Linguagem Cinematográfica** | Fotografia, iluminação, paleta de cores, direção de arte, mise-en-scène, atuação e elenco | "Como a imagem conta a história?" |
 | 4 | **Som** | Trilha sonora (score, leitmotivs), design de som, efeitos e o uso do silêncio | "O que os ouvidos percebem que os olhos não veem?" |
 | 5 | **Montagem e Ritmo** | Velocidade dos cortes, planos longos, montagem paralela, elipses, flashbacks | "Como o tempo da história é manipulado?" |
-| 6 | **Sociocultural e Representação** | Comentário social, ideologias da época, retrato de gênero/raça/classe etc. | "O que a obra diz sobre a sociedade — de propósito ou não?" |
+| 6 | **Sociocultural e Representação** | Comentário social, ideologias da época, retrato de gênero/raça/classe etc. e o posicionamento do espectador (identificação e olhar) | "O que a obra diz sobre a sociedade — de propósito ou não?" |
 | 7 | **Recepção e Impacto Cultural** | Crítica, público, prêmios, bilheteria, memes, influência em obras posteriores | "Que marca a obra deixou no mundo?" |
 
 Juntas, elas impedem o erro mais comum de análises rápidas: olhar só para a
@@ -77,14 +77,17 @@ roteiro, uma tensão ética.
 A resposta segue uma estrutura argumentativa clássica:
 
 1. **Argumento central** — uma tese defensável, não um resumo;
-2. **Evidências da obra** — cenas, diálogos e escolhas técnicas concretas;
+2. **Evidências da obra** — cenas, diálogos e escolhas técnicas concretas, com
+   minutagem ou episódio;
 3. **Análise da evidência** — *como* aqueles elementos produzem o significado;
-4. **Contexto e comparações** — diálogo com outras obras do diretor, gênero ou época.
+4. **Contra-argumento** — a objeção mais forte à tese e que evidência a
+   derrubaria (a IA deve respondê-la ou ajustar a tese);
+5. **Contexto e comparações** — diálogo com outras obras do diretor, gênero ou época.
 
-**Dica avançada:** trate a 2.2 como um debate. Conteste a tese, apresente um
-contraexemplo, peça que a IA critique o próprio argumento
-(*"Qual é o contra-argumento mais forte à sua tese?"*). É aqui que a análise
-deixa de ser descritiva e vira crítica de verdade.
+**Dica avançada:** trate a 2.2 como um debate. O prompt já obriga a IA a
+apresentar o contra-argumento mais forte à própria tese — conteste a resposta,
+traga um contraexemplo seu e observe a tese se refinar (ou ruir). É aqui que a
+análise deixa de ser descritiva e vira crítica de verdade.
 
 ---
 
@@ -137,8 +140,9 @@ organizar tudo isso.
 
 ⚠️ **Fique atento**
 - **IAs inventam detalhes.** Cenas descritas com confiança podem não existir,
-  e fontes citadas na Etapa 3 podem ser imprecisas. Confira o que for
-  importante — trate a IA como parceira de debate, não como fonte primária.
+  e fontes citadas na Etapa 3 podem ser imprecisas. Os prompts já pedem que a
+  IA marque incertezas com "(a confirmar)" — mesmo assim, confira o que for
+  importante: trate a IA como parceira de debate, não como fonte primária.
 - Obras muito recentes ou pouco conhecidas podem gerar análises mais fracas;
   nesses Casos, alimente a IA com sinopse/contexto logo após o prompt da Etapa 1.
 - Se a resposta travar no meio por tamanho, responda apenas *"Continue de
@@ -166,9 +170,11 @@ organizar tudo isso.
 ## 8. Perguntas frequentes
 
 **Preciso usar a CLI?**
-Não. Você pode abrir os arquivos em [`prompts/`](../prompts), copiar o texto
-entre os marcadores e colar na IA. A CLI só automatiza o preenchimento dos
-placeholders e a organização dos arquivos (veja o [README](../README.md)).
+Não. O jeito mais simples é a **interface web** (`index.html` na raiz do repo):
+preencha os campos, copie o prompt pronto e cole na IA. Você também pode abrir
+os arquivos em [`prompts/`](../prompts) e copiar o texto entre os marcadores
+manualmente. A CLI automatiza o preenchimento e a organização dos arquivos
+(veja o [README](../README.md)).
 
 **Posso pular direto para a Etapa 2.2 com uma pergunta minha?**
 Pode — ela funciona sozinha se você já conhece bem a obra. Mas o fluxo

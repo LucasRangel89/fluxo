@@ -33,6 +33,14 @@ Diretrizes rápidas:
   fazer, não só o que deu errado).
 - Toda funcionalidade nova merece um teste em [`tests/`](tests).
 
+## Mexendo na interface web
+
+A UI fica em `index.html` + `assets/` e lê os templates de `prompts/` via
+`fetch` em tempo real — para testar, rode `python -m http.server 8000` na raiz
+do repo e abra `http://localhost:8000`. A lista de etapas em `assets/app.js`
+(arquivos e nomes de saída) **espelha** `ETAPAS` em `src/fluxo/core.py`: se
+mudar um lado, mude o outro — `tests/test_web.py` cobra essa consistência.
+
 ## Sugerindo uma variação ou tradução
 
 Variações por tipo de obra (documentário, animação, curta-metragem) e

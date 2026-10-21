@@ -6,7 +6,8 @@
 > decisões tomadas estão na [seção 5](#5-decisões-registradas) e o plano de
 > execução na [seção 6](#6-plano-faseado-decidido).
 >
-> **Status:** decisões tomadas; **Fase 1 implementada** (prompts v2) em 2026-10-20.
+> **Status:** Fases 1 (prompts v2) e 2 (UI web) implementadas em 2026-10-20;
+> Fases 3–4 planejadas.
 
 ---
 
@@ -21,7 +22,7 @@ gênero, especificidade das séries); **(c)** uma Etapa 1 monolítica que tende
 ao checklist superficial; e **(d)** uma barreira de adoção — sem interface, o
 público natural do projeto (cinéfilos, estudantes, professores) não chega ao
 conteúdo. Os itens (a), (b) (parcial) e (c) (parcial) foram tratados na
-Fase 1; os demais estão no plano faseado.
+Fase 1, e o item (d) na Fase 2 (interface web); o restante segue no plano.
 
 ---
 
@@ -91,7 +92,7 @@ Fase 1; os demais estão no plano faseado.
    → *P4 (Fase 3) e P14 (Fase 4).*
 8. **Base técnica:** CLI depende de localizar `prompts/` a partir do repo
    (quebra se instalada e usada em outra pasta); ausência de UI limita a
-   adoção pelo público-alvo. → *P15 (Fase 2) e P17 (Fase 4).*
+   adoção pelo público-alvo. → *UI tratada por P15 (Fase 2); P17 na Fase 4.*
 
 ---
 
@@ -126,7 +127,7 @@ Fase 1; os demais estão no plano faseado.
 ### Grupo D — Produto e base técnica
 | ID | Proposta | Impacto | Esforço | Status |
 |----|----------|---------|---------|--------|
-| P15 | **UI web estática** (página única, sem backend): stepper de etapas, formulário, prompt ao vivo, copiar/baixar, lê os templates de `prompts/`, publicável no GitHub Pages | Alto | Médio | 📅 Fase 2 |
+| P15 | **UI web estática** (página única, sem backend): stepper de etapas, formulário, prompt ao vivo, copiar/baixar, lê os templates de `prompts/`, publicável no GitHub Pages | Alto | Médio | ✅ Fase 2 |
 | P16 | Modo interativo na CLI (perguntas guiadas no terminal) | Médio | Baixo | 📅 Fase 4 |
 | P17 | Empacotar os prompts junto ao pacote Python (CLI funciona instalada de qualquer pasta) | Médio | Baixo | 📅 Fase 4 |
 
@@ -140,6 +141,7 @@ Fase 1; os demais estão no plano faseado.
 | 2026-10-20 | Melhorias dos prompts em **plano faseado**, validando cada fase | Ver seção 6 |
 | 2026-10-20 | Teoria: **manter as 7 dimensões** e expandir com subitens explícitos (P10/P11) | Sem reformulação do mapa |
 | 2026-10-20 | **Fase 1 implementada** (P1, P2, P3, P6, P7, P9 parcial, P10, P11) → prompts v2 | Exemplo regenerado; repo v0.2.0 |
+| 2026-10-20 | **Fase 2 implementada**: UI web estática (P15) em `index.html` + `assets/` | Lê `prompts/` via fetch (fonte única); `.nojekyll` p/ GitHub Pages; testes anti-drift (`tests/test_web.py`); repo v0.3.0 |
 
 ## 6. Plano faseado (decidido)
 
@@ -147,9 +149,9 @@ Fase 1; os demais estão no plano faseado.
   Persona e regras de rigor, formato de saída, subitens teóricos,
   diversidade na 2.1, contra-argumento na 2.2, balanço crítico + ficha-resumo
   na Etapa 3.
-- **Fase 2 — UI web estática** (P15)
+- **Fase 2 — UI web estática** (P15) ✅
   Antecipada em relação à ordem original (A → B/C → D) para validar a
-  experiência de uso mais cedo. A UI será orientada pelos templates de
+  experiência de uso mais cedo. A UI é orientada pelos templates de
   `prompts/`, absorvendo as novas etapas das fases seguintes sem retrabalho
   estrutural.
 - **Fase 3 — Estrutura do fluxo** (P4, P5, P8, restante de P9)

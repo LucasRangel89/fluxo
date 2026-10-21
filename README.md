@@ -4,7 +4,7 @@
 
 ![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
-![Versão](https://img.shields.io/badge/vers%C3%A3o-0.1.0-green)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-0.3.0-green)
 
 Um **fluxo de prompts especializado em 3 etapas** para dissecar filmes e
 séries com a ajuda de uma IA (Claude, ChatGPT, Gemini etc.) — em suas camadas
@@ -30,7 +30,21 @@ fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
 
 ## Início rápido
 
-### Opção A — copiar e colar (sem instalar nada)
+### Opção A — Interface web (recomendado) 🌐
+
+A forma mais simples de usar o Fluxo: preencha o título e o diretor, escolha a
+etapa e copie o prompt pronto — sem terminal, sem caçar placeholders. Ela
+lembra os seus dados no navegador, marca as etapas já copiadas e permite
+baixar cada prompt em `.md`.
+
+- **Rodando localmente:** na raiz do repo, `python -m http.server 8000` e abra
+  `http://localhost:8000` (precisa ser via HTTP: a página lê os templates de
+  `prompts/` em tempo real — a mesma fonte da CLI, sem duplicação).
+- **Publicando no GitHub Pages:** *Settings → Pages → Deploy from a branch →
+  `main`, pasta `/ (root)`*. O arquivo `.nojekyll` já incluso garante que os
+  templates sejam servidos como estão.
+
+### Opção B — copiar e colar (sem instalar nada)
 
 1. Abra [`prompts/etapa-01-analise-360.md`](prompts/etapa-01-analise-360.md);
 2. Copie o texto entre os marcadores `<!-- INICIO DO PROMPT -->` e
@@ -39,7 +53,7 @@ fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
    e cole na sua IA favorita;
 4. **Na mesma conversa**, siga para as etapas 2.1, 2.2 e 3.
 
-### Opção B — CLI (Python 3.9+, zero dependências)
+### Opção C — CLI (Python 3.9+, zero dependências)
 
 ```bash
 # Instale a CLI a partir do repositório
@@ -98,6 +112,7 @@ da análise.
 ```
 fluxo/
 ├── README.md / README.en.md       # Este guia (PT-BR / English)
+├── index.html + assets/           # 🌐 Interface web (lê os templates de prompts/)
 ├── docs/
 │   └── fluxo.md                   # Guia completo do fluxo
 ├── prompts/                       # ★ Os templates das etapas (fonte da verdade)
@@ -134,7 +149,7 @@ O projeto está evoluindo em fases, a partir de uma
 - [x] **Fase 1 — Prompts v2**: persona e regras anti-alucinação, formato de
   saída estruturado, contra-argumento na Etapa 2.2 e novos subitens teóricos
   (atuação, autoria, gênero, espectador)
-- [ ] **Fase 2 — UI web**: página estática para montar e copiar os prompts sem terminal
+- [x] **Fase 2 — UI web**: página estática para montar e copiar os prompts sem terminal
 - [ ] **Fase 3 — Estrutura**: Etapa 0 (setup + sua hipótese), Etapa 1 em dois tempos, close reading (2.3)
 - [ ] **Fase 4 — Variantes e base**: séries, análise comparativa, modos
   iniciante × acadêmico, CLI interativa e empacotamento dos prompts
@@ -148,5 +163,8 @@ Sugestões de melhoria nos prompts são muito bem-vindas — veja
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licença
+
+[MIT](LICENSE) © Lucas Rangel — use, adapte e compartilhe à vontade. Bons filmes! 🍿
+
 
 [MIT](LICENSE) © Lucas Rangel — use, adapte e compartilhe à vontade. Bons filmes! 🍿

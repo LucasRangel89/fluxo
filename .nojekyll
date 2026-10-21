@@ -1,0 +1,2 @@
+# GitHub Pages: publica os arquivos como estão, sem processar com Jekyll.
+# (Necessário para a interface web ler os templates .md de prompts/ via fetch.)

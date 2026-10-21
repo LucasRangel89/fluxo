@@ -4,6 +4,28 @@ Todas as mudanças relevantes deste projeto serão documentadas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.3.0] — 2026-10-20
+
+### Adicionado
+- **Fase 2 do plano — Interface web estática** (`index.html` + `assets/`):
+  - Stepper das 4 etapas com formulário (título, diretor, pergunta) e prompt
+    gerado ao vivo, editável antes de copiar;
+  - Botões **Copiar** e **Baixar .md**, aviso de campos pendentes, contador de
+    caracteres e marcação (✓) das etapas já copiadas;
+  - Lê os templates direto de `prompts/` via fetch — mesma fonte da CLI, sem
+    duplicação — e lembra os dados no navegador (localStorage);
+  - Exemplo embutido (*Cidade de Deus*), tema escuro "sala de cinema" e layout
+    responsivo para celular.
+- Arquivo `.nojekyll` para publicar no GitHub Pages servindo tudo como está.
+- `tests/test_web.py`: testes de integração garantindo que a UI usa os mesmos
+  templates, marcadores, placeholders e versão da CLI.
+
+### Corrigido
+- Restauradas edições da Fase 1 que não haviam persistido no guia
+  `docs/fluxo.md` (tabela das 7 dimensões com os novos subitens, estrutura da
+  Etapa 2.2 com contra-argumento, boas práticas) e os badges de versão dos
+  READMEs.
+
 ## [0.2.0] — 2026-10-20
 
 ### Adicionado

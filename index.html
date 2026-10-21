@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluxo 🎬 — Análise de Filmes e Séries com IA</title>
+<meta name="description" content="Monte em segundos os prompts do Fluxo: análise de filmes e séries em 3 etapas (360°, aprofundamento crítico e síntese) para colar na sua IA favorita.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="container">
+    <p class="kicker">Fluxo de prompts · Filmes &amp; Séries</p>
+    <h1>🎬 Fluxo <span>análise de obras audiovisuais com IA</span></h1>
+    <p class="sub">Preencha os dados da obra, escolha a etapa e copie o prompt pronto para colar na sua IA favorita. Uma análise em três atos: <strong>mapear → aprofundar → sintetizar</strong>.</p>
+    <div class="faixa-filme" aria-hidden="true"></div>
+  </div>
+</header>
+
+<main class="container">
+  <noscript>
+    <p class="aviso aviso-erro">Esta página precisa de JavaScript para montar os prompts. Sem ele, use os templates em <code>prompts/</code> ou a CLI (<code>fluxo gerar</code>).</p>
+  </noscript>
+
+  <div id="aviso-erro" class="aviso aviso-erro" hidden>
+    <strong>Não consegui carregar os templates.</strong> Esta página lê os arquivos de <code>prompts/</code> em tempo real e, por isso, precisa ser servida por HTTP (abrir o arquivo direto do disco não funciona). Na raiz do repositório, rode <code>python -m http.server 8000</code> e acesse <code>http://localhost:8000</code> — ou use a CLI (<code>fluxo gerar</code>).
+  </div>
+
+  <section class="card" aria-labelledby="h-obra">
+    <h2 id="h-obra">1 · Sua obra</h2>
+    <div class="grid-2">
+      <div class="campo">
+        <label for="titulo">Título do filme/série</label>
+        <input id="titulo" type="text" placeholder="Ex.: Cidade de Deus (2002)" autocomplete="off">
+        <small>Inclua o ano para não confundir com remakes e homônimos.</small>
+      </div>
+      <div class="campo">
+        <label for="diretor">Diretor(a) / criador(a)</label>
+        <input id="diretor" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
+        <small>Usado na Etapa 1. Em séries, pode ser o(a) showrunner.</small>
+      </div>
+    </div>
+    <div class="acoes-linha">
+      <button id="btn-exemplo" class="btn btn-suave" type="button">🍿 Usar o exemplo (Cidade de Deus)</button>
+      <button id="btn-limpar" class="btn btn-suave" type="button">Nova análise (limpar)</button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-etapa">
+    <h2 id="h-etapa">2 · Escolha a etapa</h2>
+    <nav class="stepper" id="stepper" aria-label="Etapas do fluxo"></nav>
+    <p class="etapa-desc" id="etapa-desc"></p>
+    <div class="campo" id="campo-pergunta" hidden>
+      <label for="pergunta">Pergunta escolhida (da Etapa 2.1)</label>
+      <textarea id="pergunta" rows="3" placeholder="Cole aqui a pergunta que você escolheu da lista gerada na Etapa 2.1..."></textarea>
+      <small>Vale também formular a sua própria pergunta.</small>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-prompt">
+    <div class="prompt-topo">
+      <h2 id="h-prompt">3 · Seu prompt pronto</h2>
+      <span class="contador" id="contador"></span>
+    </div>
+    <p class="dica-edicao" id="dica-edicao" hidden>✏️ Você editou o texto à mão — sem problemas, copie quando estiver no ponto. <button id="btn-regenerar" class="btn-link" type="button">Regerar a partir dos campos</button></p>
+    <textarea id="saida" rows="18" spellcheck="false" aria-label="Prompt gerado"></textarea>
+    <p class="pendencias" id="pendencias" hidden></p>
+    <div class="acoes">
+      <button id="btn-copiar" class="btn btn-primario" type="button">📋 Copiar prompt</button>
+      <button id="btn-baixar" class="btn" type="button">⬇️ Baixar .md</button>
+    </div>
+    <ol class="como-usar">
+      <li>Copie o prompt e cole na sua IA (Claude, ChatGPT, Gemini...).</li>
+      <li>Rode as etapas <strong>na ordem e na mesma conversa</strong>: 1 → 2.1 → 2.2 → 3 (o ✓ marca as que você já copiou).</li>
+      <li>Na Etapa 2.2, cole aqui no formulário a pergunta que escolheu na 2.1.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="container rodape">
+  <p>Fluxo v0.3.0 · <a href="https://github.com/LucasRangel89/fluxo">GitHub</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/docs/fluxo.md">Guia completo do fluxo</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/exemplos/cidade-de-deus/README.md">Exemplo</a></p>
+  <p>Os prompts são montados na hora, no seu navegador, a partir dos templates em <code>prompts/</code> — a mesma fonte usada pela CLI. Nada sai da sua máquina.</p>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="assets/app.js"></script>
+</body>
+</html>
