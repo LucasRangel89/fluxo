@@ -4,6 +4,38 @@ Todas as mudanças relevantes deste projeto serão documentadas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.0.0] — 2026-10-21
+
+### Adicionado
+- **Fase 4 do plano — variantes e base técnica (fecha o plano faseado):**
+  - **Etapa 1S · Análise 360° de Série/Temporada**
+    (`prompts/etapa-01s-analise-serie.md`): as 7 dimensões traduzidas para a
+    lógica seriada — arcos em 3 níveis (série, temporada, episódio), piloto
+    e *finale*, cliffhangers, showrunner, modelo de exibição (semanal ×
+    maratona) e episódio-síntese;
+  - **Etapa 4 · Análise Comparativa** (`prompts/etapa-04-comparativa.md`):
+    duas obras frente a frente sob um eixo — cartões, terreno comum,
+    comparação dimensão a dimensão em pares, diálogo entre elas, juízo por
+    critérios e tabela comparativa;
+  - **Modos de análise** (`--modo padrao|iniciante|academico`, seletor na
+    interface web): calibrados nas etapas de abertura (1, 1A, 1S e 4) pelo
+    novo placeholder opcional `{{MODO_DE_ANALISE}}` — nunca conta como
+    pendente e não deixa buracos no texto;
+  - **CLI interativa** (`fluxo interativo`): perguntas no terminal, pede só
+    o que cada etapa precisa e oferece copiar/salvar o prompt;
+  - **Templates empacotados**: cópias em `src/fluxo/_templates/`
+    (sincronizadas por `scripts/sincronizar_templates.py` e verificadas por
+    testes) permitem usar a CLI instalada via pip, fora do repositório.
+- CLI: etapas `1s` e `4` (com aliases como `serie`, `temporada` e
+  `comparativa`), flags `--obra-a`, `--diretor-a`, `--obra-b`,
+  `--diretor-b`, `--eixo` e `--modo`; o comando `novo` gera os 10 prompts.
+- Interface web: 10 etapas no stepper, campos da comparativa e seletor de
+  modo; o exemplo embutido também preenche a comparativa (Cidade de Deus ×
+  Tropa de Elite).
+- Exemplo regenerado com os 10 prompts preenchidos, incluindo a
+  comparativa; guia `docs/fluxo.md` com a variante 1S, a Etapa 4, novos
+  termos no glossário e FAQ sobre modos.
+
 ## [0.4.0] — 2026-10-20
 
 ### Adicionado

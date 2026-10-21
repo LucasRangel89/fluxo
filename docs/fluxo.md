@@ -23,6 +23,8 @@ flowchart TD
     D --> D3["<b>Etapa 2.3 · Close reading</b> (opcional)<br/>uma sequência, plano a plano"]
     D3 --> E["<b>Etapa 3 · Síntese e conexões</b><br/>inclui revisitar sua hipótese inicial"]
     D --> E
+    A -.-> A2["<i>Variante séries:</i><br/><b>1S · 360° seriada</b><br/>(no lugar da Etapa 1)"]
+    E -.-> F["<i>Variante:</i><br/><b>Etapa 4 · Comparativa</b><br/>duas obras frente a frente"]
 ```
 
 | Etapa | Papel no fluxo | Analogia |
@@ -30,10 +32,12 @@ flowchart TD
 | **0 — Preparação** *(opcional)* | Registrar **sua** leitura antes da IA: hipótese, objetivo, nível | A anamnese |
 | **1 — Análise 360°** | Mapear tudo: narrativa, imagem, som, montagem, contexto e legado | O raio-x |
 | **1A + 1B** *(alternativa)* | O mesmo raio-x em dois tempos: primeiro o texto, depois o contexto | Raio-x em duas sessões |
+| **1S — 360° seriada** *(variante)* | O raio-x traduzido para temporadas: arcos longos, piloto, cliffhangers e showrunner | O raio-x seriado |
 | **2.1 — Proposta** | Identificar onde estão as questões mais ricas | Escolher onde operar |
 | **2.2 — Análise focada** | Construir um argumento denso sobre uma única questão | A cirurgia |
 | **2.3 — Close reading** *(opcional)* | Dissecar uma sequência plano a plano | A biópsia |
 | **3 — Síntese** | Consolidar, julgar, conectar com outras obras e indicar leituras | A alta com recomendações |
+| **4 — Comparativa** *(variante)* | Duas obras frente a frente sob um eixo: pares, diálogo e tabela-síntese | O exame comparativo |
 
 **Regra de ouro:** rode as etapas **na mesma conversa**, em ordem. Cada
 prompt foi escrito pressupondo o que a IA já disse antes ("Com base no que foi
@@ -91,6 +95,17 @@ da Etapa 1 (nunca junto dela):
 
 A numeração das dimensões é a mesma nos dois caminhos — registro e etapas
 seguintes funcionam igual.
+
+### Variante para séries: a Etapa 1S
+
+Para séries e temporadas, use a
+**[Etapa 1S](../prompts/etapa-01s-analise-serie.md)** no lugar da Etapa 1: ela
+mantém as 7 dimensões, mas traduz cada uma para a lógica seriada — arcos em
+três níveis (série, temporada, episódio), piloto e *finale*, cliffhangers, o
+papel do showrunner e o modelo de exibição (semanal × maratona) — e fecha com
+a escolha de um episódio-síntese. Indique a temporada no título
+(`Dark — Temporada 1 (2017)`) e siga para as Etapas 2.x/3 normalmente.
+Detalhes na [seção 5](#5-adaptações-por-tipo-de-obra).
 
 ---
 
@@ -169,8 +184,11 @@ organizar tudo isso.
 
 - **Filme:** uso direto. Inclua o ano no título para evitar confusão com
   remakes/homônimos: `Duna (2021)` vs. `Duna (1984)`.
-- **Série (temporada):** rode o fluxo **por temporada** (`Dark — Temporada 1`).
-  A dimensão 2 do template já pede arcos de temporada e de personagens.
+- **Série (temporada):** rode o fluxo **por temporada**
+  (`Dark — Temporada 1 (2017)`) e use a
+  **[Etapa 1S](../prompts/etapa-01s-analise-serie.md)** no lugar da Etapa 1 —
+  ela é desenhada para arcos longos, piloto, cliffhangers e showrunner; as
+  Etapas 2.x e 3 seguem iguais.
 - **Episódio específico:** funciona muito bem para episódios marcantes
   ("bottle episodes", finais). Use `Série — T1:E5 "Nome do episódio"` no título.
 - **Documentário:** as dimensões se aplicam; a IA tende a adaptar "roteiro"
@@ -179,6 +197,11 @@ organizar tudo isso.
   especificidades do cinema documental (modos de Nichols) onde couber."*
 - **Animação:** idem — a dimensão 3 costuma render muito (técnica, estilo,
   design). Opcional: *"Destaque as escolhas próprias da linguagem da animação."*
+- **Duas obras em comparação (Etapa 4):** remakes e refilmagens, o mesmo
+  diretor em épocas diferentes, o mesmo tema em países diferentes — use a
+  **[Etapa 4 comparativa](../prompts/etapa-04-comparativa.md)**, que coloca
+  as duas obras frente a frente sob um eixo e fecha com uma tabela-síntese.
+  Funciona como conversa própria, em qualquer momento do seu estudo.
 
 ---
 
@@ -217,6 +240,9 @@ organizar tudo isso.
 | **Plano-sequência** | Cena longa filmada em uma única tomada contínua |
 | **Score** | Trilha musical original composta para a obra (≠ músicas licenciadas) |
 | **Arco de personagem** | A trajetória de transformação de um personagem ao longo da narrativa |
+| **Showrunner** | Quem comanda criativamente uma série (roteiro, tom, arcos) — a figura autoral da ficção seriada |
+| **Cliffhanger** | Gancho no fim do episódio que deixa uma situação-chave em suspenso para o próximo |
+| **Binge-watching (maratona)** | Assistir a muitos episódios de uma vez — modelo de lançamento típico do streaming; opõe-se à exibição semanal |
 
 ---
 
@@ -253,3 +279,18 @@ A Etapa 1 é mais rápida e basta para a maioria dos Casos. Use os dois tempos
 quando a obra for densa ou longa (séries!), quando a resposta única vier
 truncada ou rala nas últimas dimensões, ou quando quiser o máximo de
 profundidade por dimensão. Não use os dois caminhos na mesma análise.
+
+**Para uma série, uso a Etapa 1 ou a 1S?**
+A **1S**. Ela mantém as 7 dimensões, mas traduzidas para a lógica seriada
+(arcos em 3 níveis, piloto, cliffhangers, showrunner, modelo de exibição) e
+pede evidências por episódio (T1:E5) — um mapa bem mais útil para as etapas
+seguintes. Rodou a Etapa 1 numa série? Sem drama: ela funciona; a 1S só
+entrega mais.
+
+**Qual modo de análise usar: padrão, iniciante ou acadêmico?**
+O modo calibra o registro das respostas nas etapas de abertura (1, 1A, 1S e
+4) — e, como a conversa é a mesma, a calibragem vale para o ciclo todo. Use
+**iniciante** se quer cada termo técnico explicado ao aparecer,
+**acadêmico** se quer rigor teórico com autores e conceitos nomeados, e
+**padrão** no meio do caminho. Na CLI é a flag `--modo`; na interface web,
+o seletor "Modo de análise".

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fluxo 🎬 — Análise de Filmes e Séries com IA</title>
-<meta name="description" content="Monte em segundos os prompts do Fluxo: preparação, análise 360°, aprofundamento crítico, close reading e síntese — para colar na sua IA favorita.">
+<meta name="description" content="Monte em segundos os prompts do Fluxo: preparação, análise 360° (com variantes para séries e comparação de obras), aprofundamento crítico, close reading e síntese — para colar na sua IA favorita.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <link rel="stylesheet" href="assets/app.css">
 </head>
@@ -33,14 +33,23 @@
     <div class="grid-2">
       <div class="campo">
         <label for="titulo">Título do filme/série</label>
-        <input id="titulo" type="text" placeholder="Ex.: Cidade de Deus (2002)" autocomplete="off">
-        <small>Inclua o ano para não confundir com remakes e homônimos.</small>
+        <input id="titulo" type="text" placeholder="Ex.: Cidade de Deus (2002) · Dark — Temporada 1 (2017)" autocomplete="off">
+        <small>Inclua o ano para não confundir com remakes e homônimos. Em séries, inclua a temporada.</small>
       </div>
       <div class="campo">
         <label for="diretor">Diretor(a) / criador(a)</label>
         <input id="diretor" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
-        <small>Usado nas Etapas 0, 1, 1A e 1B. Em séries, pode ser o(a) showrunner.</small>
+        <small>Usado nas Etapas 0, 1, 1A, 1B e 1S. Em séries, pode ser o(a) showrunner.</small>
       </div>
+    </div>
+    <div class="campo">
+      <label for="modo">Modo de análise</label>
+      <select id="modo">
+        <option value="padrao">Padrão (para iniciados)</option>
+        <option value="iniciante">Iniciante — explica os termos técnicos</option>
+        <option value="academico">Acadêmico — rigor teórico, com autores e conceitos</option>
+      </select>
+      <small>Calibra as etapas de abertura (1, 1A, 1S e 4) — e a calibragem vale para a conversa toda.</small>
     </div>
     <div class="acoes-linha">
       <button id="btn-exemplo" class="btn btn-suave" type="button">🍿 Usar o exemplo (Cidade de Deus)</button>
@@ -80,6 +89,27 @@
       <textarea id="sequencia" rows="2" placeholder="Descreva com precisão — ex.: A abertura: a perseguição ao frango (≈0:00–3:30)"></textarea>
       <small>Quanto mais precisa (o que acontece + minutagem/episódio), menos a IA inventa detalhes.</small>
     </div>
+    <div class="campo campo-extra" data-campo="OBRA_A" hidden>
+      <label for="obra-a">Obra A</label>
+      <input id="obra-a" type="text" placeholder="Ex.: Cidade de Deus (2002)" autocomplete="off">
+    </div>
+    <div class="campo campo-extra" data-campo="DIRETOR_A" hidden>
+      <label for="diretor-a">Diretor(a) / criador(a) da obra A</label>
+      <input id="diretor-a" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
+    </div>
+    <div class="campo campo-extra" data-campo="OBRA_B" hidden>
+      <label for="obra-b">Obra B</label>
+      <input id="obra-b" type="text" placeholder="Ex.: Tropa de Elite (2007)" autocomplete="off">
+    </div>
+    <div class="campo campo-extra" data-campo="DIRETOR_B" hidden>
+      <label for="diretor-b">Diretor(a) / criador(a) da obra B</label>
+      <input id="diretor-b" type="text" placeholder="Ex.: José Padilha" autocomplete="off">
+    </div>
+    <div class="campo campo-extra" data-campo="EIXO_DE_COMPARACAO" hidden>
+      <label for="eixo">Eixo da comparação</label>
+      <textarea id="eixo" rows="3" placeholder="Ex.: Duas visões da violência urbana brasileira — a favela vista de dentro (Buscapé) × pelo Estado (Cap. Nascimento): forma e ética do olhar"></textarea>
+      <small>O eixo é o coração da Etapa 4: é ele que decide o que será comparado, em que termos.</small>
+    </div>
   </section>
 
   <section class="card" aria-labelledby="h-prompt">
@@ -98,12 +128,13 @@
       <li>Copie o prompt e cole na sua IA (Claude, ChatGPT, Gemini...).</li>
       <li>Rode as etapas <strong>na ordem e na mesma conversa</strong>: 0 → 1 → 2.1 → 2.2 → 3 (o ✓ marca as que você já copiou).</li>
       <li>Quer mais profundidade? Troque a Etapa 1 por <strong>1A (texto) + 1B (contexto)</strong> — e use a <strong>2.3</strong> para dissecar uma sequência plano a plano.</li>
+      <li>Analisando uma <strong>série</strong>? Use a <strong>1S</strong>, pensada para temporadas. E para colocar <strong>duas obras frente a frente</strong>, vá de <strong>Etapa 4 (comparativa)</strong>.</li>
     </ol>
   </section>
 </main>
 
 <footer class="container rodape">
-  <p>Fluxo v0.4.0 · <a href="https://github.com/LucasRangel89/fluxo">GitHub</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/docs/fluxo.md">Guia completo do fluxo</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/exemplos/cidade-de-deus/README.md">Exemplo</a></p>
+  <p>Fluxo v1.0.0 · <a href="https://github.com/LucasRangel89/fluxo">GitHub</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/docs/fluxo.md">Guia completo do fluxo</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/exemplos/cidade-de-deus/README.md">Exemplo</a></p>
   <p>Os prompts são montados na hora, no seu navegador, a partir dos templates em <code>prompts/</code> — a mesma fonte usada pela CLI. Nada sai da sua máquina.</p>
 </footer>
 

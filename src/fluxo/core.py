@@ -4,6 +4,10 @@ Os templates vivem na pasta ``prompts/`` do repositório, como arquivos
 Markdown legíveis por humanos. O texto do prompt em si fica delimitado pelos
 marcadores ``<!-- INICIO DO PROMPT -->`` e ``<!-- FIM DO PROMPT -->`` — é esse
 trecho que a CLI extrai, preenche e entrega pronto para colar na IA.
+
+Quando a CLI está instalada fora do repositório, ela usa as cópias
+empacotadas em ``fluxo/_templates/`` (mantidas em dia por
+``scripts/sincronizar_templates.py`` e verificadas por testes).
 """
 
 from __future__ import annotations
@@ -19,6 +23,8 @@ MARCADOR_FIM = "<!-- FIM DO PROMPT -->"
 
 _RE_PLACEHOLDER = re.compile(r"\{\{\s*([A-Z0-9_]+)\s*\}\}")
 
+_DIR_EMPACOTADO = Path(__file__).parent / "_templates"
+
 # Para cada placeholder conhecido: (nome amigável, flag equivalente na CLI).
 PLACEHOLDERS: dict[str, tuple[str, str | None]] = {
     "TITULO_DA_OBRA": ("título do filme/série", "--titulo"),
@@ -29,7 +35,33 @@ PLACEHOLDERS: dict[str, tuple[str, str | None]] = {
     "IMPRESSOES_INICIAIS": ("suas impressões/hipóteses iniciais", "--impressoes"),
     "PERGUNTA_ESCOLHIDA": ("pergunta escolhida na Etapa 2.1", "--pergunta"),
     "SEQUENCIA_ESCOLHIDA": ("sequência escolhida para o close reading", "--sequencia"),
+    "OBRA_A": ("primeira obra da comparação (com ano)", "--obra-a"),
+    "DIRETOR_A": ("diretor(a)/criador(a) da primeira obra", "--diretor-a"),
+    "OBRA_B": ("segunda obra da comparação (com ano)", "--obra-b"),
+    "DIRETOR_B": ("diretor(a)/criador(a) da segunda obra", "--diretor-b"),
+    "EIXO_DE_COMPARACAO": ("eixo da comparação (tema, remake, mesmo diretor...)", "--eixo"),
+    "MODO_DE_ANALISE": ("modo de análise (opcional)", "--modo"),
     "DATA_DA_ANALISE": ("data da análise", None),
+}
+
+# Placeholders que podem faltar sem erro: viram "" na substituição.
+OPCIONAIS: frozenset[str] = frozenset({"MODO_DE_ANALISE"})
+
+# Instrução injetada nos prompts de abertura conforme o modo (--modo).
+MODOS_DE_ANALISE: dict[str, str] = {
+    "padrao": "",
+    "iniciante": (
+        "Calibragem (modo iniciante): explique cada termo técnico na primeira "
+        "vez que ele aparecer, entre parênteses e em linguagem simples; "
+        "prefira exemplos concretos a conceitos abstratos e não pressuponha "
+        "repertório de teoria do cinema."
+    ),
+    "academico": (
+        "Calibragem (modo acadêmico): use registro acadêmico e o vocabulário "
+        "técnico sem simplificações; ao mobilizar teoria do cinema, nomeie "
+        "autores e conceitos (sem inventar referências); problematize "
+        "consensos e aponte os debates em aberto."
+    ),
 }
 
 
@@ -97,6 +129,17 @@ ETAPAS: dict[str, Etapa] = {
             obrigatorios=("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"),
         ),
         Etapa(
+            id="1s",
+            nome="Análise 360° de Série/Temporada",
+            arquivo_template="etapa-01s-analise-serie.md",
+            arquivo_saida="01s-prompt-analise-360-serie.md",
+            descricao=(
+                "Variante da Etapa 1 para séries: arcos em 3 níveis, piloto, "
+                "showrunner, modelo de exibição e episódio-síntese."
+            ),
+            obrigatorios=("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"),
+        ),
+        Etapa(
             id="2.1",
             nome="Proposta de Aprofundamento Crítico",
             arquivo_template="etapa-02.1-proposta-aprofundamento.md",
@@ -137,6 +180,19 @@ ETAPAS: dict[str, Etapa] = {
             ),
             obrigatorios=("TITULO_DA_OBRA",),
         ),
+        Etapa(
+            id="4",
+            nome="Análise Comparativa (duas obras)",
+            arquivo_template="etapa-04-comparativa.md",
+            arquivo_saida="04-prompt-comparativa.md",
+            descricao=(
+                "Variante: duas obras frente a frente sob um eixo (remake, "
+                "mesmo diretor, mesmo tema) + tabela comparativa."
+            ),
+            obrigatorios=(
+                "OBRA_A", "DIRETOR_A", "OBRA_B", "DIRETOR_B", "EIXO_DE_COMPARACAO",
+            ),
+        ),
     )
 }
 
@@ -149,17 +205,21 @@ _ALIASES: dict[str, str] = {
     "etapa-1a": "1a", "texto": "1a",
     "1b": "1b", "01b": "1b", "1-b": "1b", "e1b": "1b", "etapa1b": "1b",
     "etapa-1b": "1b", "contexto": "1b",
+    "1s": "1s", "01s": "1s", "1-s": "1s", "e1s": "1s", "etapa1s": "1s",
+    "etapa-1s": "1s", "serie": "1s", "series": "1s", "temporada": "1s",
     "2.1": "2.1", "21": "2.1", "2-1": "2.1", "etapa2.1": "2.1", "etapa-2.1": "2.1",
     "2.2": "2.2", "22": "2.2", "2-2": "2.2", "etapa2.2": "2.2", "etapa-2.2": "2.2",
     "2.3": "2.3", "23": "2.3", "2-3": "2.3", "etapa2.3": "2.3", "etapa-2.3": "2.3",
     "close-reading": "2.3", "closereading": "2.3", "close": "2.3",
     "3": "3", "03": "3", "e3": "3", "etapa3": "3", "etapa-3": "3",
     "etapa03": "3", "etapa-03": "3",
+    "4": "4", "04": "4", "e4": "4", "etapa4": "4", "etapa-4": "4",
+    "etapa04": "4", "etapa-04": "4", "comparativa": "4", "comparacao": "4",
 }
 
 
 def normalizar_etapa(entrada: str) -> str:
-    """Aceita variações como ``00``, ``etapa-1a`` ou ``close`` e devolve o id canônico."""
+    """Aceita variações como ``00``, ``serie`` ou ``close`` e devolve o id canônico."""
     chave = entrada.strip().lower().replace(" ", "")
     try:
         return _ALIASES[chave]
@@ -180,7 +240,7 @@ def _procurar_para_cima(inicio: Path, relativo: str) -> Path | None:
 
 
 def encontrar_diretorio_prompts() -> Path:
-    """Localiza a pasta ``prompts/`` (env ``FLUXO_PROMPTS_DIR`` ou busca no repo)."""
+    """Localiza os templates: env, repositório ou cópias empacotadas no pacote."""
     env = os.environ.get("FLUXO_PROMPTS_DIR")
     if env:
         caminho = Path(env).expanduser()
@@ -191,19 +251,25 @@ def encontrar_diretorio_prompts() -> Path:
         achado = _procurar_para_cima(inicio, "prompts/etapa-01-analise-360.md")
         if achado is not None:
             return achado.parent
+    # Instalação via pip, fora do repositório: templates empacotados.
+    if (_DIR_EMPACOTADO / "etapa-01-analise-360.md").is_file():
+        return _DIR_EMPACOTADO
     raise FluxoError(
-        "Não encontrei o diretório 'prompts/'. Execute a partir da raiz do "
+        "Não encontrei os templates de prompt. Execute a partir da raiz do "
         "repositório ou defina a variável FLUXO_PROMPTS_DIR."
     )
 
 
 def encontrar_template_registro() -> Path:
-    """Localiza ``templates/registro-de-analise.md``."""
+    """Localiza ``registro-de-analise.md`` (repositório ou pacote)."""
     for inicio in (Path(__file__).parent, Path.cwd()):
         achado = _procurar_para_cima(inicio, "templates/registro-de-analise.md")
         if achado is not None:
             return achado
-    raise FluxoError("Não encontrei o arquivo 'templates/registro-de-analise.md'.")
+    empacotado = _DIR_EMPACOTADO / "registro-de-analise.md"
+    if empacotado.is_file():
+        return empacotado
+    raise FluxoError("Não encontrei o template de registro de análise.")
 
 
 def extrair_prompt(conteudo: str) -> str:
@@ -228,13 +294,22 @@ def carregar_template(etapa_id: str, diretorio: Path | None = None) -> str:
     return extrair_prompt(caminho.read_text(encoding="utf-8"))
 
 
+def placeholders_do_template(
+    etapa_id: str, diretorio: Path | None = None
+) -> list[str]:
+    """Lista, em ordem de aparição, os placeholders usados pelo template da etapa."""
+    template = carregar_template(etapa_id, diretorio)
+    return list(dict.fromkeys(_RE_PLACEHOLDER.findall(template)))
+
+
 def preencher(template: str, valores: dict[str, str], *, estrito: bool = True) -> str:
     """Substitui os placeholders ``{{CHAVE}}`` pelos valores informados.
 
-    No modo estrito (padrão), qualquer placeholder sem valor gera um
-    :class:`FluxoError` indicando o que falta. Fora dele, os trechos pendentes
-    viram ``[PREENCHER: CHAVE]`` — útil ao montar a estrutura de uma análise
-    antes de conhecer, por exemplo, a pergunta da Etapa 2.2.
+    No modo estrito (padrão), qualquer placeholder obrigatório sem valor gera
+    um :class:`FluxoError` indicando o que falta; os opcionais (ver
+    ``OPCIONAIS``) viram texto vazio. Fora do modo estrito, os obrigatórios
+    pendentes viram ``[PREENCHER: CHAVE]`` — útil ao montar a estrutura de uma
+    análise antes de conhecer, por exemplo, a pergunta da Etapa 2.2.
     """
     faltando: list[str] = []
 
@@ -243,6 +318,8 @@ def preencher(template: str, valores: dict[str, str], *, estrito: bool = True) -
         valor = (valores.get(chave) or "").strip()
         if valor:
             return valor
+        if chave in OPCIONAIS:
+            return ""
         faltando.append(chave)
         return match.group(0) if estrito else f"[PREENCHER: {chave}]"
 
@@ -253,7 +330,8 @@ def preencher(template: str, valores: dict[str, str], *, estrito: bool = True) -
             nome, flag = PLACEHOLDERS.get(chave, (chave, None))
             detalhes.append(f"{nome} ({flag})" if flag else nome)
         raise FluxoError("Faltam informações obrigatórias: " + "; ".join(detalhes) + ".")
-    return resultado
+    # Placeholders opcionais vazios não devem deixar buracos no texto.
+    return re.sub(r"\n{3,}", "\n\n", resultado)
 
 
 def gerar_prompt(

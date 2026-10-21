@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================================
-   Fluxo — interface web (Fases 2 e 3)
+   Fluxo — interface web (Fases 2, 3 e 4)
 
    Lê os templates de `prompts/` em tempo real (mesma fonte da CLI), extrai o
    prompt entre os marcadores HTML e preenche os placeholders a partir do
@@ -57,9 +57,57 @@ const CAMPOS = {
     rotulo: "sequência escolhida",
     pendente: "[sequência escolhida para o close reading]",
   },
+  OBRA_A: {
+    id: "obra-a",
+    rotulo: "obra A",
+    pendente: "[obra A (com ano)]",
+  },
+  DIRETOR_A: {
+    id: "diretor-a",
+    rotulo: "diretor(a) da obra A",
+    pendente: "[diretor(a)/criador(a) da obra A]",
+  },
+  OBRA_B: {
+    id: "obra-b",
+    rotulo: "obra B",
+    pendente: "[obra B (com ano)]",
+  },
+  DIRETOR_B: {
+    id: "diretor-b",
+    rotulo: "diretor(a) da obra B",
+    pendente: "[diretor(a)/criador(a) da obra B]",
+  },
+  EIXO_DE_COMPARACAO: {
+    id: "eixo",
+    rotulo: "eixo da comparação",
+    pendente: "[eixo da comparação — tema, remake, mesmo diretor...]",
+  },
+  MODO_DE_ANALISE: {
+    id: "modo",
+    rotulo: "modo de análise",
+    pendente: "[modo de análise]",
+  },
 };
 
 const IDS_CAMPOS = Object.values(CAMPOS).map((c) => c.id);
+
+/* Placeholders opcionais: nunca contam como pendentes (espelha OPCIONAIS
+   em core.py). O valor de MODO_DE_ANALISE vem do seletor de modo. */
+const OPCIONAIS = new Set(["MODO_DE_ANALISE"]);
+
+const MODOS_DE_ANALISE = {
+  padrao: "",
+  iniciante:
+    "Calibragem (modo iniciante): explique cada termo técnico na primeira " +
+    "vez que ele aparecer, entre parênteses e em linguagem simples; " +
+    "prefira exemplos concretos a conceitos abstratos e não pressuponha " +
+    "repertório de teoria do cinema.",
+  academico:
+    "Calibragem (modo acadêmico): use registro acadêmico e o vocabulário " +
+    "técnico sem simplificações; ao mobilizar teoria do cinema, nomeie " +
+    "autores e conceitos (sem inventar referências); problematize " +
+    "consensos e aponte os debates em aberto.",
+};
 
 const ETAPAS = [
   {
@@ -103,6 +151,16 @@ const ETAPAS = [
     extras: [],
   },
   {
+    id: "1s",
+    rotulo: "Etapa 1S",
+    nome: "Série/temporada",
+    arquivo: "prompts/etapa-01s-analise-serie.md",
+    saida: "01s-prompt-analise-360-serie.md",
+    descricao:
+      "Variante da Etapa 1 para séries e temporadas: arcos em 3 níveis (série, temporada, episódio), piloto, cliffhangers, showrunner e modelo de exibição — fechando com o episódio-síntese.",
+    extras: [],
+  },
+  {
     id: "2.1",
     rotulo: "Etapa 2.1",
     nome: "Proposta de aprofundamento",
@@ -142,11 +200,22 @@ const ETAPAS = [
       "Fechamento do ciclo: síntese, balanço crítico, obras em diálogo, reflexões (com o antes/depois da sua leitura), fontes e a ficha-resumo.",
     extras: [],
   },
+  {
+    id: "4",
+    rotulo: "Etapa 4",
+    nome: "Comparativa",
+    arquivo: "prompts/etapa-04-comparativa.md",
+    saida: "04-prompt-comparativa.md",
+    descricao:
+      "Variante: duas obras frente a frente sob um eixo — remake, mesmo diretor(a), mesmo tema, mesma década. Cartões das duas, comparação em pares, juízo por critérios e tabela-síntese.",
+    extras: ["OBRA_A", "DIRETOR_A", "OBRA_B", "DIRETOR_B", "EIXO_DE_COMPARACAO"],
+  },
 ];
 
 const EXEMPLO = {
   titulo: "Cidade de Deus (2002)",
   diretor: "Fernando Meirelles e Kátia Lund",
+  modo: "padrao",
   tipo: "Filme (longa-metragem de ficção)",
   objetivo: "Estudar a fundo um clássico do cinema brasileiro",
   nivel: "Intermediário — leio críticas e quero aprofundar a técnica",
@@ -156,6 +225,12 @@ const EXEMPLO = {
     "De que forma a montagem acelerada e fragmentada, combinada à narração em off de Buscapé, transforma a violência em espetáculo — e como o filme lida com a tensão ética entre estetizar essa violência e, ao mesmo tempo, criticá-la?",
   sequencia:
     "A abertura completa: a faca sendo amolada, a fuga e a perseguição ao frango, até o plano em que Buscapé fica preso entre o bando de Zé Pequeno e a polícia (≈0:00–3:30)",
+  "obra-a": "Cidade de Deus (2002)",
+  "diretor-a": "Fernando Meirelles e Kátia Lund",
+  "obra-b": "Tropa de Elite (2007)",
+  "diretor-b": "José Padilha",
+  eixo:
+    "Duas visões da violência urbana brasileira: a favela pelos olhos de quem mora nela (Buscapé, o fotógrafo) × pelos olhos do Estado (Cap. Nascimento, o BOPE) — forma e ética do olhar",
 };
 
 const CHAVE_STORAGE = "fluxo-ui-v1";
@@ -196,19 +271,25 @@ function etapaAtual() {
 function valorCampo(chave) {
   const campo = CAMPOS[chave];
   if (!campo || !el[campo.id]) return "";
+  if (chave === "MODO_DE_ANALISE") {
+    return MODOS_DE_ANALISE[el.modo.value] || "";
+  }
   return el[campo.id].value.trim();
 }
 
 function montarPrompt() {
   const template = estado.templates[estado.etapaAtual] || "";
   const pendentes = [];
-  const texto = template.replace(RE_PLACEHOLDER, (_trecho, chave) => {
+  let texto = template.replace(RE_PLACEHOLDER, (_trecho, chave) => {
     const valor = valorCampo(chave);
     if (valor) return valor;
+    if (OPCIONAIS.has(chave)) return "";
     const info = CAMPOS[chave];
     if (info && !pendentes.includes(info.rotulo)) pendentes.push(info.rotulo);
     return info ? info.pendente : "[" + chave + "]";
   });
+  /* Placeholders opcionais vazios não devem deixar buracos no texto. */
+  texto = texto.replace(/\n{3,}/g, "\n\n");
   return { texto, pendentes };
 }
 
@@ -220,6 +301,7 @@ function camposExtrasVisiveis() {
   const template = estado.templates[etapa.id];
   if (!template) return etapa.extras || [];
   return Object.keys(CAMPOS).filter((chave) =>
+    !OPCIONAIS.has(chave) &&
     new RegExp("\\{\\{\\s*" + chave + "\\s*\\}\\}").test(template)
   );
 }
@@ -413,10 +495,12 @@ async function carregarTemplates() {
 
 IDS_CAMPOS.forEach((id) => {
   if (!el[id]) return;
-  el[id].addEventListener("input", () => {
+  const aoMudar = () => {
     salvar();
     render();
-  });
+  };
+  el[id].addEventListener("input", aoMudar);
+  el[id].addEventListener("change", aoMudar); /* cobre o <select> de modo */
 });
 
 el.saida.addEventListener("input", () => {
@@ -446,6 +530,7 @@ el["btn-exemplo"].addEventListener("click", () => {
 
 el["btn-limpar"].addEventListener("click", () => {
   IDS_CAMPOS.forEach((id) => { if (el[id]) el[id].value = ""; });
+  el.modo.value = "padrao"; /* select não faz sentido vazio: volta ao padrão */
   estado.copiadas.clear();
   estado.etapaAtual = "0";
   estado.editadoManualmente = false;

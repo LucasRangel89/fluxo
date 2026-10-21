@@ -22,10 +22,12 @@ comentário social.
 | [`01-prompt-analise-360.md`](01-prompt-analise-360.md) | 1 | Prompt da Análise 360°, pronto para colar |
 | [`01a-prompt-analise-360-texto.md`](01a-prompt-analise-360-texto.md) | 1A | Alternativa à Etapa 1 — 1º tempo: o texto (dimensões 2–5) |
 | [`01b-prompt-analise-360-contexto.md`](01b-prompt-analise-360-contexto.md) | 1B | Alternativa à Etapa 1 — 2º tempo: o contexto (dimensões 1, 6 e 7) |
+| [`01s-prompt-analise-360-serie.md`](01s-prompt-analise-360-serie.md) | 1S | Variante seriada da Etapa 1 (incluída como referência — pense nela para séries, não para este filme) |
 | [`02.1-prompt-proposta-aprofundamento.md`](02.1-prompt-proposta-aprofundamento.md) | 2.1 | Prompt pedindo as perguntas de aprofundamento |
 | [`02.2-prompt-analise-focada.md`](02.2-prompt-analise-focada.md) | 2.2 | Prompt da análise focada, com a pergunta escolhida (abaixo) |
 | [`02.3-prompt-close-reading.md`](02.3-prompt-close-reading.md) | 2.3 | Close reading da sequência de abertura (opcional) |
 | [`03-prompt-sintese-conexoes.md`](03-prompt-sintese-conexoes.md) | 3 | Prompt de síntese e conexões |
+| [`04-prompt-comparativa.md`](04-prompt-comparativa.md) | 4 | Comparativa Cidade de Deus × Tropa de Elite: duas visões da violência urbana brasileira |
 | [`registro.md`](registro.md) | — | Modelo para registrar os achados da análise |
 
 > ⚠️ Cole os prompts **na ordem, na mesma conversa** com a IA.
@@ -75,6 +77,11 @@ fluxo novo \
   --impressoes "Na primeira vez que vi, achei a violência espetacularizada demais, quase um videoclipe. Hoje desconfio que a forma acelerada é justamente o tema — mas ainda não sei dizer se o filme critica ou celebra esse mundo." \
   --pergunta "De que forma a montagem acelerada e fragmentada, combinada à narração em off de Buscapé, transforma a violência em espetáculo — e como o filme lida com a tensão ética entre estetizar essa violência e, ao mesmo tempo, criticá-la?" \
   --sequencia "A abertura completa: a faca sendo amolada, a fuga e a perseguição ao frango, até o plano em que Buscapé fica preso entre o bando de Zé Pequeno e a polícia (≈0:00–3:30)" \
+  --obra-a "Cidade de Deus (2002)" \
+  --diretor-a "Fernando Meirelles e Kátia Lund" \
+  --obra-b "Tropa de Elite (2007)" \
+  --diretor-b "José Padilha" \
+  --eixo "Duas visões da violência urbana brasileira: a favela pelos olhos de quem mora nela (Buscapé, o fotógrafo) × pelos olhos do Estado (Cap. Nascimento, o BOPE) — forma e ética do olhar" \
   --slug cidade-de-deus \
   --destino exemplos
 ```

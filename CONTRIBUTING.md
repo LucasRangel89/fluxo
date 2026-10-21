@@ -13,7 +13,12 @@ Os templates ficam em [`prompts/`](prompts). Ao editar:
    e underscores). Se criar um placeholder novo, registre-o em
    `PLACEHOLDERS` no arquivo `src/fluxo/core.py` e adicione a flag
    correspondente em `src/fluxo/cli.py`.
-3. Teste o prompt de verdade com uma obra e, se possível, descreva no PR o
+3. **Sincronize as cópias empacotadas**: depois de editar qualquer template,
+   rode `python scripts/sincronizar_templates.py` — ele atualiza
+   `src/fluxo/_templates/`, o fallback usado quando a CLI é instalada via
+   pip, fora do repositório. Os testes falham se alguma cópia ficar
+   dessincronizada.
+4. Teste o prompt de verdade com uma obra e, se possível, descreva no PR o
    que melhorou na resposta da IA.
 
 ## Mexendo no código (CLI)

@@ -21,6 +21,11 @@ VALORES = {
     "IMPRESSOES_INICIAIS": "Achei a violência espetacularizada demais.",
     "PERGUNTA_ESCOLHIDA": "Como a montagem constrói o ciclo de violência?",
     "SEQUENCIA_ESCOLHIDA": "A abertura: perseguição ao frango (≈0:00–3:30)",
+    "OBRA_A": "Cidade de Deus (2002)",
+    "DIRETOR_A": "Fernando Meirelles e Kátia Lund",
+    "OBRA_B": "Tropa de Elite (2007)",
+    "DIRETOR_B": "José Padilha",
+    "EIXO_DE_COMPARACAO": "Duas visões da violência urbana brasileira",
 }
 
 

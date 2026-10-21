@@ -87,7 +87,8 @@ h1 span {
 .campo-extra { margin-top: 16px; }
 
 input[type="text"],
-textarea {
+textarea,
+select {
   width: 100%;
   background: var(--bg-campo);
   border: 1px solid var(--borda);

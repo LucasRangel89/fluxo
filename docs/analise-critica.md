@@ -124,16 +124,16 @@ por tipo de obra e base técnica).
 |----|----------|---------|---------|--------|
 | P10 | Explicitar subitens: atuação/performance e gênero (dim. 2/3), autoria (dim. 1/2), espectador/olhar (dim. 6), indústria/streaming (dim. 1/7), focalização (dim. 2) | Alto | Baixo | ✅ Fase 1 |
 | P11 | Neutralizar viés clássico: pedir a estrutura real da obra, admitindo modelos não-ocidentais/experimentais; exigir comprovação ao aplicar um rótulo | Médio | Baixo | ✅ Fase 1 |
-| P12 | Variante **séries/temporadas**: serialidade, piloto, arcos em 3 níveis, showrunner, modelo de exibição | Alto | Médio | 📅 Fase 4 |
-| P13 | Variante **comparativa**: duas obras em diálogo (mesmo diretor, remake, mesmo tema) | Médio | Médio | 📅 Fase 4 |
-| P14 | Modos **iniciante × acadêmico** (variável de profundidade/registro nos prompts) | Médio | Médio | 📅 Fase 4 |
+| P12 | Variante **séries/temporadas**: serialidade, piloto, arcos em 3 níveis, showrunner, modelo de exibição | Alto | Médio | ✅ Fase 4 |
+| P13 | Variante **comparativa**: duas obras em diálogo (mesmo diretor, remake, mesmo tema) | Médio | Médio | ✅ Fase 4 |
+| P14 | Modos **iniciante × acadêmico** (variável de profundidade/registro nos prompts) | Médio | Médio | ✅ Fase 4 |
 
 ### Grupo D — Produto e base técnica
 | ID | Proposta | Impacto | Esforço | Status |
 |----|----------|---------|---------|--------|
 | P15 | **UI web estática** (página única, sem backend): stepper de etapas, formulário, prompt ao vivo, copiar/baixar, lê os templates de `prompts/`, publicável no GitHub Pages | Alto | Médio | ✅ Fase 2 |
-| P16 | Modo interativo na CLI (perguntas guiadas no terminal) | Médio | Baixo | 📅 Fase 4 |
-| P17 | Empacotar os prompts junto ao pacote Python (CLI funciona instalada de qualquer pasta) | Médio | Baixo | 📅 Fase 4 |
+| P16 | Modo interativo na CLI (perguntas guiadas no terminal) | Médio | Baixo | ✅ Fase 4 |
+| P17 | Empacotar os prompts junto ao pacote Python (CLI funciona instalada de qualquer pasta) | Médio | Baixo | ✅ Fase 4 |
 
 ---
 
@@ -147,6 +147,7 @@ por tipo de obra e base técnica).
 | 2026-10-20 | **Fase 1 implementada** (P1, P2, P3, P6, P7, P9 parcial, P10, P11) → prompts v2 | Exemplo regenerado; repo v0.2.0 |
 | 2026-10-20 | **Fase 2 implementada**: UI web estática (P15) em `index.html` + `assets/` | Lê `prompts/` via fetch (fonte única); `.nojekyll` p/ GitHub Pages; testes anti-drift (`tests/test_web.py`); repo v0.3.0 |
 | 2026-10-20 | **Fase 3 implementada**: Etapa 0, 1A/1B em dois tempos, close reading 2.3 e revisita à hipótese (P4, P5, P8, P9 completo) | 1A/1B como **alternativa** à Etapa 1 (não substituição); UI deriva os campos dos placeholders do template; repo v0.4.0 |
+| 2026-10-21 | **Fase 4 implementada**: variantes 1S (séries) e Etapa 4 (comparativa), modos iniciante × acadêmico, CLI interativa e prompts empacotados (P12–P14, P16, P17) | **Plano faseado concluído** (P1–P17); repo v1.0.0 |
 
 ## 6. Plano faseado (decidido)
 
@@ -163,6 +164,11 @@ por tipo de obra e base técnica).
   Etapa 0 com a hipótese do usuário, Etapa 1 em dois tempos (1A/1B como
   alternativa à Etapa 1 única), close reading 2.3 e a Etapa 3 revisitando a
   hipótese inicial.
-- **Fase 4 — Variantes e base técnica** (P12, P13, P14, P16, P17)
-  Séries, comparativa, modos de profundidade, CLI interativa e
-  empacotamento dos prompts no pacote Python.
+- **Fase 4 — Variantes e base técnica** (P12, P13, P14, P16, P17) ✅
+  Séries (Etapa 1S), comparativa (Etapa 4), modos de profundidade
+  (iniciante × acadêmico), CLI interativa e empacotamento dos prompts no
+  pacote Python.
+
+**Plano concluído** 🎬 — todas as propostas P1–P17 foram implementadas e o
+projeto alcançou a **v1.0.0**. Ideias futuras registradas no README:
+tradução dos prompts (EN/ES) e integração opcional com APIs de LLMs.

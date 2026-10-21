@@ -4,7 +4,7 @@
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
-![Version](https://img.shields.io/badge/version-0.4.0-green)
+![Version](https://img.shields.io/badge/version-1.0.0-green)
 
 A **specialized 3-stage prompt flow** for dissecting films and series with the
 help of an AI (Claude, ChatGPT, Gemini, etc.) across their narrative,
@@ -24,10 +24,12 @@ flow drives a progressive analysis: **map → deepen → synthesize**.
 | **0 · Preparation** *(optional)* | Identifies the work, calibrates your goal/level and **records your own hypothesis before the AI weighs in** — revisited in Stage 3 | [`etapa-00`](prompts/etapa-00-preparacao.md) | `fluxo gerar 0` |
 | **1 · 360° Audiovisual Analysis** | An "X-ray" of the work across **7 dimensions**: production context, narrative, image, sound, editing, sociocultural representation, and reception/legacy | [`etapa-01`](prompts/etapa-01-analise-360.md) | `fluxo gerar 1` |
 | **1A + 1B · Two-part 360°** *(alternative to Stage 1)* | The same X-ray split in two: **Text** (narrative, image, sound, editing) → **Context** (production, sociocultural, reception), closing with the full 7-dimension summary table | [`etapa-01a`](prompts/etapa-01a-analise-texto.md) · [`etapa-01b`](prompts/etapa-01b-analise-contexto.md) | `fluxo gerar 1a` / `1b` |
+| **1S · Series 360°** *(series variant)* | The X-ray designed for seasons: **arcs at 3 levels** (series, season, episode), pilot, cliffhangers, **showrunner**, and release model | [`etapa-01s`](prompts/etapa-01s-analise-serie.md) | `fluxo gerar 1s` |
 | **2.1 · Deep-Dive Proposal** | Based on Stage 1's map, the AI proposes **3–5 analytical questions** — you pick one | [`etapa-02.1`](prompts/etapa-02.1-proposta-aprofundamento.md) | `fluxo gerar 2.1` |
 | **2.2 · Focused Analysis** | A deep dive into the chosen question: **thesis → evidence → analysis → context** | [`etapa-02.2`](prompts/etapa-02.2-analise-focada.md) | `fluxo gerar 2.2` |
 | **2.3 · Close Reading** *(optional)* | **One sequence dissected shot by shot**: breakdown, mise-en-scène, sound, editing, and the meaning built by form | [`etapa-02.3`](prompts/etapa-02.3-close-reading.md) | `fluxo gerar 2.3` |
 | **3 · Synthesis & Connections** | Consolidates the insights, judges the work (critical balance), suggests **works in dialogue**, reflection questions — including the **before/after of your own reading** — and **essential sources** | [`etapa-03`](prompts/etapa-03-sintese-conexoes.md) | `fluxo gerar 3` |
+| **4 · Comparative** *(variant)* | **Two works head-to-head** under one axis (remake, same director, same theme): card profiles, paired comparison, criteria-based verdict, and a **summary table** | [`etapa-04`](prompts/etapa-04-comparativa.md) | `fluxo gerar 4` |
 
 > 📖 **Full guide (PT-BR):** [docs/fluxo.md](docs/fluxo.md) — the logic behind
 > each stage, the 7 dimensions explained, adaptations for series and
@@ -77,8 +79,10 @@ fluxo gerar 2.1 --titulo "City of God (2002)"
 fluxo gerar 2.2 --pergunta "How does the frenetic editing turn violence into spectacle...?"
 fluxo gerar 2.3 --titulo "City of God (2002)" --sequencia "The opening: the chicken chase (≈0:00–3:30)"   # optional close reading
 fluxo gerar 3 --titulo "City of God (2002)" --copiar   # --copiar: copy to clipboard
+fluxo gerar 4 --obra-a "City of God (2002)" --diretor-a "Fernando Meirelles and Kátia Lund" --obra-b "Elite Squad (2007)" --diretor-b "José Padilha" --eixo "Two views of Brazilian urban violence"   # comparative variant; add --modo iniciante|academico to calibrate the register
+fluxo interativo   # guided mode: answer questions, get prompts (no flags to memorize)
 
-# Or scaffold a whole analysis folder (all 8 stage prompts + a notes file):
+# Or scaffold a whole analysis folder (all 10 stage prompts + a notes file):
 fluxo novo --titulo "City of God (2002)" --diretor "Fernando Meirelles and Kátia Lund"
 ```
 
@@ -88,8 +92,9 @@ No install needed — from the repo root you can also run
 | Command | Description |
 | ------- | ----------- |
 | `fluxo listar` | Lists the stages and what each one requires |
-| `fluxo gerar <stage>` | Generates a stage prompt (`0`, `1`, `1a`, `1b`, `2.1`, `2.2`, `2.3`, `3`). Flags: `--titulo`, `--diretor`, `--tipo`, `--objetivo`, `--nivel`, `--impressoes`, `--pergunta`, `--sequencia`, `--salvar file`, `--copiar` |
+| `fluxo gerar <stage>` | Generates a stage prompt (`0`, `1`, `1a`, `1b`, `1s`, `2.1`, `2.2`, `2.3`, `3`, `4`). Flags: `--titulo`, `--diretor`, `--tipo`, `--objetivo`, `--nivel`, `--impressoes`, `--pergunta`, `--sequencia`, `--obra-a`/`--diretor-a`/`--obra-b`/`--diretor-b`/`--eixo` (comparative), `--modo` (`padrao`/`iniciante`/`academico`), `--salvar file`, `--copiar` |
 | `fluxo novo --titulo "..."` | Creates `analises/<slug>/` with **every stage's** prompt plus a `registro.md` notes file |
+| `fluxo interativo` | Guided mode: answer questions in the terminal and build prompts stage by stage (no flags to memorize) |
 | `fluxo --versao` | Prints the version |
 
 ---
@@ -97,7 +102,7 @@ No install needed — from the repo root you can also run
 ## Example
 
 [`exemplos/cidade-de-deus/`](exemplos/cidade-de-deus) contains the complete
-flow filled in for **City of God (2002)**: all 8 prompts ready to paste, an
+flow filled in for **City of God (2002)**: all 10 prompts ready to paste, an
 illustrative set of Stage 2.1 questions, and the analysis record.
 
 ## Repository structure
@@ -110,7 +115,8 @@ fluxo/
 ├── prompts/                       # ★ The stage templates (single source of truth)
 ├── templates/registro-de-analise.md
 ├── exemplos/cidade-de-deus/       # Worked example, end to end
-├── src/fluxo/                     # Python CLI (no dependencies)
+├── src/fluxo/                     # Python CLI (no dependencies; templates bundled as fallback)
+├── scripts/sincronizar_templates.py  # Refreshes the bundled template copies
 └── tests/                         # Automated tests (unittest)
 ```
 
@@ -131,8 +137,9 @@ The project is evolving in phases, based on a
 - [x] **Phase 2 — Web UI**: static page to build and copy prompts without a terminal
 - [x] **Phase 3 — Structure**: Stage 0 (setup + your own hypothesis), two-part
   Stage 1, close-reading stage (2.3)
-- [ ] **Phase 4 — Variants & plumbing**: series variant, comparative analysis,
-  beginner × academic modes, interactive CLI, bundled prompts
+- [x] **Phase 4 — Variants & plumbing**: series variant (1S), comparative
+  analysis (Stage 4), beginner × academic modes, interactive CLI, bundled
+  prompts — **v1.0.0** 🎉
 
 Later ideas: EN/ES prompt translations and optional LLM-API integration.
 

@@ -27,7 +27,9 @@ class TestInterfaceWeb(unittest.TestCase):
         for campo in (
             'id="titulo"', 'id="diretor"', 'id="tipo"', 'id="objetivo"',
             'id="nivel"', 'id="impressoes"', 'id="pergunta"',
-            'id="sequencia"', 'id="saida"', 'id="stepper"',
+            'id="sequencia"', 'id="obra-a"', 'id="diretor-a"',
+            'id="obra-b"', 'id="diretor-b"', 'id="eixo"', 'id="modo"',
+            'id="saida"', 'id="stepper"',
         ):
             with self.subTest(campo=campo):
                 self.assertIn(campo, self.index)

@@ -1,12 +1,14 @@
 """Interface de linha de comando do Fluxo.
 
 Comandos:
-    fluxo listar   -> mostra as etapas e o que cada uma requer
-    fluxo gerar N  -> gera o prompt da etapa N, pronto para colar na IA
-    fluxo novo     -> cria uma pasta de análise com todos os prompts + registro
+    fluxo listar      -> mostra as etapas e o que cada uma requer
+    fluxo gerar N     -> gera o prompt da etapa N, pronto para colar na IA
+    fluxo novo        -> cria uma pasta de análise com todos os prompts
+    fluxo interativo  -> modo guiado: perguntas no terminal, prompt no fim
 
 Etapas: 0 (preparação), 1 (360° de uma vez) ou 1a+1b (em dois tempos),
-2.1 (proposta), 2.2 (focada), 2.3 (close reading, opcional) e 3 (síntese).
+1s (variante de séries), 2.1 (proposta), 2.2 (focada), 2.3 (close reading),
+3 (síntese) e 4 (comparativa entre duas obras).
 """
 
 from __future__ import annotations
@@ -21,17 +23,21 @@ from pathlib import Path
 from . import __version__
 from .core import (
     ETAPAS,
+    MODOS_DE_ANALISE,
+    OPCIONAIS,
     PLACEHOLDERS,
     FluxoError,
     gerar_prompt,
     gerar_registro,
     normalizar_etapa,
+    placeholders_do_template,
     slugificar,
 )
 
 
 def _valores(args: argparse.Namespace) -> dict[str, str]:
     """Mapeia as flags da CLI para os placeholders dos templates."""
+    modo = getattr(args, "modo", "padrao") or "padrao"
     return {
         "TITULO_DA_OBRA": getattr(args, "titulo", "") or "",
         "DIRETOR_OU_CRIADOR": getattr(args, "diretor", "") or "",
@@ -41,6 +47,12 @@ def _valores(args: argparse.Namespace) -> dict[str, str]:
         "IMPRESSOES_INICIAIS": getattr(args, "impressoes", "") or "",
         "PERGUNTA_ESCOLHIDA": getattr(args, "pergunta", "") or "",
         "SEQUENCIA_ESCOLHIDA": getattr(args, "sequencia", "") or "",
+        "OBRA_A": getattr(args, "obra_a", "") or "",
+        "DIRETOR_A": getattr(args, "diretor_a", "") or "",
+        "OBRA_B": getattr(args, "obra_b", "") or "",
+        "DIRETOR_B": getattr(args, "diretor_b", "") or "",
+        "EIXO_DE_COMPARACAO": getattr(args, "eixo", "") or "",
+        "MODO_DE_ANALISE": MODOS_DE_ANALISE[modo],
     }
 
 
@@ -76,10 +88,12 @@ def cmd_listar(_args: argparse.Namespace) -> int:
         print(f"  Etapa {etapa.id:<4} {etapa.nome}")
         print(f"           {etapa.descricao}")
         print(f"           Requer: {flags}\n")
+    print("Modos (--modo): padrao | iniciante (explica os termos) | academico.")
     print(
         'Exemplo: fluxo gerar 1 --titulo "Cidade de Deus (2002)" '
         '--diretor "Fernando Meirelles e Kátia Lund"'
     )
+    print("Ou rode 'fluxo interativo' e responda às perguntas.")
     return 0
 
 
@@ -110,7 +124,8 @@ def cmd_gerar(args: argparse.Namespace) -> int:
 _PENDENTES_ACEITAVEIS = (
     "DIRETOR_OU_CRIADOR", "TIPO_DE_OBRA", "META_DA_ANALISE",
     "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS", "PERGUNTA_ESCOLHIDA",
-    "SEQUENCIA_ESCOLHIDA",
+    "SEQUENCIA_ESCOLHIDA", "OBRA_A", "DIRETOR_A", "OBRA_B", "DIRETOR_B",
+    "EIXO_DE_COMPARACAO",
 )
 
 
@@ -154,6 +169,88 @@ def cmd_novo(args: argparse.Namespace) -> int:
     return 0
 
 
+def _perguntar(texto: str) -> str:
+    return input(texto)
+
+
+def _sim(texto: str) -> bool:
+    return _perguntar(texto).strip().lower() in ("s", "sim", "y", "yes")
+
+
+def cmd_interativo(_args: argparse.Namespace) -> int:
+    """Modo guiado: perguntas no terminal e prompt pronto no fim de cada etapa."""
+    print("🎬 Fluxo — modo interativo")
+    print("Responda às perguntas e eu monto os prompts para você.")
+    print("Dica: rode as etapas na ordem, colando cada prompt na MESMA conversa com a IA.\n")
+    valores: dict[str, str] = {chave: "" for chave in PLACEHOLDERS}
+    try:
+        valores["TITULO_DA_OBRA"] = _perguntar("Título do filme/série: ").strip()
+        if not valores["TITULO_DA_OBRA"]:
+            print("Sem título, sem análise. Até logo! 🎬")
+            return 0
+        valores["DIRETOR_OU_CRIADOR"] = _perguntar(
+            "Diretor(a)/criador(a) / showrunner (Enter = preencher depois): "
+        ).strip()
+        print("Modo de análise: [0] padrão  [1] iniciante (explica os termos)  "
+              "[2] acadêmico")
+        escolha = _perguntar("Modo [0]: ").strip()
+        modo = {"1": "iniciante", "2": "academico"}.get(escolha, "padrao")
+        valores["MODO_DE_ANALISE"] = MODOS_DE_ANALISE[modo]
+        slug = slugificar(valores["TITULO_DA_OBRA"])
+
+        while True:
+            print("\nEtapas disponíveis:")
+            for etapa in ETAPAS.values():
+                print(f"  [{etapa.id:>4}] {etapa.nome}")
+            entrada = _perguntar(
+                "\nQual etapa você quer gerar? (id da etapa, ou 'sair'): "
+            ).strip().lower()
+            if entrada in ("sair", "q", "quit"):
+                break
+            if not entrada:
+                continue
+            try:
+                etapa = ETAPAS[normalizar_etapa(entrada)]
+            except FluxoError as erro:
+                print(f"⚠️  {erro}")
+                continue
+
+            for chave in placeholders_do_template(etapa.id):
+                if chave in OPCIONAIS or valores.get(chave):
+                    continue
+                nome, _flag = PLACEHOLDERS.get(chave, (chave, None))
+                valores[chave] = _perguntar(f"{nome}: ").strip()
+
+            try:
+                prompt = gerar_prompt(etapa.id, valores)
+            except FluxoError as erro:
+                print(f"⚠️  {erro} Tente de novo.")
+                # Limpa só o que a etapa exigia, para perguntar outra vez.
+                for chave in etapa.obrigatorios:
+                    if chave not in ("TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR"):
+                        valores[chave] = ""
+                continue
+
+            print("\n" + "─" * 64)
+            print(prompt)
+            print("─" * 64)
+            if _sim("Copiar para a área de transferência? [s/N] "):
+                print(
+                    "Copiado! 🎬 Cole na conversa com a IA."
+                    if _copiar(prompt)
+                    else "Não consegui copiar automaticamente — copie o texto acima."
+                )
+            if _sim(f"Salvar em analises/{slug}/{etapa.arquivo_saida}? [s/N] "):
+                destino = Path("analises") / slug / etapa.arquivo_saida
+                destino.parent.mkdir(parents=True, exist_ok=True)
+                destino.write_text(prompt + "\n", encoding="utf-8")
+                print(f"Salvo em {destino}")
+    except (EOFError, KeyboardInterrupt):
+        print("\n")
+    print("Até logo! 🎬 Bons filmes (e séries).")
+    return 0
+
+
 def _flags_da_obra(parser: argparse.ArgumentParser) -> None:
     """Flags de preenchimento compartilhadas por `gerar` e `novo`."""
     parser.add_argument("--titulo", help="Título do filme/série.")
@@ -177,6 +274,20 @@ def _flags_da_obra(parser: argparse.ArgumentParser) -> None:
         "--sequencia",
         help="Sequência a dissecar, com minutagem/episódio (etapa 2.3).",
     )
+    parser.add_argument("--obra-a", help="Primeira obra da comparação (etapa 4).")
+    parser.add_argument("--diretor-a", help="Diretor(a)/criador(a) da obra A (etapa 4).")
+    parser.add_argument("--obra-b", help="Segunda obra da comparação (etapa 4).")
+    parser.add_argument("--diretor-b", help="Diretor(a)/criador(a) da obra B (etapa 4).")
+    parser.add_argument(
+        "--eixo",
+        help="Eixo da comparação: tema, remake, mesmo diretor... (etapa 4).",
+    )
+    parser.add_argument(
+        "--modo",
+        choices=sorted(MODOS_DE_ANALISE),
+        default="padrao",
+        help="Calibragem do prompt: padrao, iniciante (explica termos) ou academico.",
+    )
 
 
 def construir_parser() -> argparse.ArgumentParser:
@@ -195,12 +306,18 @@ def construir_parser() -> argparse.ArgumentParser:
     )
     p_listar.set_defaults(func=cmd_listar)
 
+    p_interativo = sub.add_parser(
+        "interativo",
+        help="Modo guiado: responde perguntas no terminal e monta os prompts.",
+    )
+    p_interativo.set_defaults(func=cmd_interativo)
+
     p_gerar = sub.add_parser(
         "gerar", help="Gera o prompt de uma etapa com os placeholders preenchidos."
     )
     p_gerar.add_argument(
         "etapa",
-        help="Etapa desejada: 0, 1, 1a, 1b, 2.1, 2.2, 2.3 ou 3 (veja 'fluxo listar').",
+        help="Etapa desejada: 0, 1, 1a, 1b, 1s, 2.1, 2.2, 2.3, 3 ou 4 (veja 'fluxo listar').",
     )
     _flags_da_obra(p_gerar)
     p_gerar.add_argument(
