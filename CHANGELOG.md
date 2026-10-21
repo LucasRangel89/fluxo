@@ -4,6 +4,38 @@ Todas as mudanças relevantes deste projeto serão documentadas aqui.
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.1.0] — 2026-10-21
+
+### Adicionado
+- **Fase 5 — sessão guiada e acessibilidade sem backend:**
+  - **Etapa R · Pesquisa e Dossiê de Fontes** (`etapa r`): fato antes da
+    interpretação, com identidade da obra, ficha, produção, recepção,
+    controvérsias, incertezas e fontes nomeadas;
+  - **Trilhas de sessão** (`padrao`, `dois-tempos`, `serie`, `comparativa`)
+    compartilhadas por CLI e web, com dependências e próxima ação;
+  - **Prompt Maestro** (`fluxo maestro`): um único prompt conduz a análise
+    inteira em uma conversa, parando para a escolha da Etapa 2.1 e para a
+    sequência opcional da 2.3;
+  - comando **`fluxo sessao`**, que gera apenas a trilha escolhida, o
+    Prompt Maestro, o manifesto `sessao.json` e o dossiê editável;
+  - marcadores opcionais de resposta para a sessão guiada (`RESUMO:`,
+    `PERGUNTA:`, `SEQUENCIA_SUGERIDA:` e `FONTE:`) e parsers para importar
+    respostas, selecionar perguntas/sequências e montar continuidade;
+  - busca de metadados sem chave na web via **Wikipedia/Wikidata** e
+    **TVMaze**, com confirmação manual, atribuição e URLs no dossiê;
+  - executores opcionais, sem chave do projeto: sua IA externa por
+    copiar/abrir, **Puter** com a conta do usuário, **BYOK** compatível
+    com OpenAI e IA local do Chrome via `LanguageModel`, quando disponível;
+  - exportação/importação da sessão web em Markdown e JSON;
+  - flags `--dossie` e `--dossie-arquivo`; `fluxo novo` agora inclui
+    Etapa R, Prompt Maestro, manifesto e dossiê no kit completo;
+  - exemplo *Cidade de Deus* regenerado com os novos arquivos e testes
+    dedicados da Fase 5.
+
+### Corrigido
+- A inferência de trilha da CLI não classifica um kit como comparativo
+  apenas porque ele também contém obras A/B quando há uma obra principal.
+
 ## [1.0.0] — 2026-10-21
 
 ### Adicionado

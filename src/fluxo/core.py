@@ -41,11 +41,12 @@ PLACEHOLDERS: dict[str, tuple[str, str | None]] = {
     "DIRETOR_B": ("diretor(a)/criador(a) da segunda obra", "--diretor-b"),
     "EIXO_DE_COMPARACAO": ("eixo da comparação (tema, remake, mesmo diretor...)", "--eixo"),
     "MODO_DE_ANALISE": ("modo de análise (opcional)", "--modo"),
+    "DOSSE_DE_FONTES": ("dossiê, metadados e pistas de fontes (opcional)", "--dossie"),
     "DATA_DA_ANALISE": ("data da análise", None),
 }
 
 # Placeholders que podem faltar sem erro: viram "" na substituição.
-OPCIONAIS: frozenset[str] = frozenset({"MODO_DE_ANALISE"})
+OPCIONAIS: frozenset[str] = frozenset({"MODO_DE_ANALISE", "DOSSE_DE_FONTES"})
 
 # Instrução injetada nos prompts de abertura conforme o modo (--modo).
 MODOS_DE_ANALISE: dict[str, str] = {
@@ -96,6 +97,19 @@ ETAPAS: dict[str, Etapa] = {
             obrigatorios=(
                 "TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR", "TIPO_DE_OBRA",
                 "META_DA_ANALISE", "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS",
+            ),
+        ),
+        Etapa(
+            id="r",
+            nome="Pesquisa e Dossiê de Fontes",
+            arquivo_template="etapa-00r-pesquisa-fontes.md",
+            arquivo_saida="00r-prompt-pesquisa-fontes.md",
+            descricao=(
+                "Etapa opcional de pesquisa: reúne fatos verificáveis, fontes "
+                "e incertezas antes da interpretação."
+            ),
+            obrigatorios=(
+                "TITULO_DA_OBRA", "DIRETOR_OU_CRIADOR", "TIPO_DE_OBRA",
             ),
         ),
         Etapa(
@@ -199,6 +213,9 @@ ETAPAS: dict[str, Etapa] = {
 _ALIASES: dict[str, str] = {
     "0": "0", "00": "0", "e0": "0", "etapa0": "0", "etapa-0": "0",
     "etapa00": "0", "etapa-00": "0", "setup": "0", "preparacao": "0",
+    "r": "r", "0r": "r", "00r": "r", "er": "r", "etapar": "r",
+    "etapa-r": "r", "pesquisa": "r", "fontes": "r", "dossie": "r",
+    "dossiê": "r", "research": "r",
     "1": "1", "01": "1", "e1": "1", "etapa1": "1", "etapa-1": "1",
     "etapa01": "1", "etapa-01": "1",
     "1a": "1a", "01a": "1a", "1-a": "1a", "e1a": "1a", "etapa1a": "1a",
@@ -343,6 +360,439 @@ def gerar_prompt(
 ) -> str:
     """Gera o prompt final de uma etapa, já com os placeholders preenchidos."""
     return preencher(carregar_template(etapa_id, diretorio), valores, estrito=estrito)
+
+
+TRILHAS: dict[str, tuple[str, ...]] = {
+    "padrao": ("0", "1", "2.1", "2.2", "2.3", "3"),
+    "serie": ("0", "1s", "2.1", "2.2", "2.3", "3"),
+    "dois-tempos": ("0", "1a", "1b", "2.1", "2.2", "2.3", "3"),
+    "comparativa": ("4",),
+}
+
+_ALIASES_TRILHA: dict[str, str] = {
+    "padrao": "padrao",
+    "filme": "padrao",
+    "padrao-filme": "padrao",
+    "serie": "serie",
+    "series": "serie",
+    "temporada": "serie",
+    "doistempos": "dois-tempos",
+    "dois-tempos": "dois-tempos",
+    "dois": "dois-tempos",
+    "comparativa": "comparativa",
+    "comparacao": "comparativa",
+}
+
+
+def normalizar_trilha(entrada: str | None) -> str:
+    """Normaliza o nome de uma trilha de sessão (ex.: ``série`` -> ``serie``)."""
+    bruto = (entrada or "padrao").strip().lower().replace(" ", "-")
+    sem_acento = unicodedata.normalize("NFKD", bruto).encode(
+        "ascii", "ignore"
+    ).decode("ascii")
+    try:
+        return _ALIASES_TRILHA[sem_acento]
+    except KeyError:
+        validas = ", ".join(TRILHAS)
+        raise FluxoError(
+            f"Trilha desconhecida: {entrada!r}. Trilhas válidas: {validas}."
+        ) from None
+
+
+def etapas_da_sessao(
+    trilha: str = "padrao",
+    *,
+    incluir_pesquisa: bool = True,
+    incluir_close_reading: bool = True,
+) -> list[str]:
+    """Retorna, em ordem, as etapas relevantes para uma sessão guiada."""
+    canonica = normalizar_trilha(trilha)
+    etapas = list(TRILHAS[canonica])
+    if incluir_pesquisa:
+        posicao = 1 if etapas and etapas[0] == "0" else 0
+        etapas.insert(posicao, "r")
+    if not incluir_close_reading and "2.3" in etapas:
+        etapas.remove("2.3")
+    return etapas
+
+
+def _valores_para_etapa_da_sessao(
+    etapa_id: str, valores: dict[str, str], trilha: str
+) -> dict[str, str]:
+    """Adapta os valores da sessão a etapas com outro enquadramento.
+
+    A pesquisa comparativa usa o template genérico da Etapa R; por isso, as
+    duas obras viram temporariamente o ``TITULO_DA_OBRA`` daquela geração.
+    """
+    resultado = dict(valores)
+    if etapa_id == "r" and normalizar_trilha(trilha) == "comparativa":
+        obra_a = (valores.get("OBRA_A") or "").strip()
+        obra_b = (valores.get("OBRA_B") or "").strip()
+        if obra_a or obra_b:
+            resultado["TITULO_DA_OBRA"] = " × ".join(
+                trecho for trecho in (obra_a, obra_b) if trecho
+            )
+        diretor_a = (valores.get("DIRETOR_A") or "").strip()
+        diretor_b = (valores.get("DIRETOR_B") or "").strip()
+        criadores = []
+        if diretor_a:
+            criadores.append(f"{obra_a or 'Obra A'}: {diretor_a}")
+        if diretor_b:
+            criadores.append(f"{obra_b or 'Obra B'}: {diretor_b}")
+        if criadores:
+            resultado["DIRETOR_OU_CRIADOR"] = "; ".join(criadores)
+        eixo = (valores.get("EIXO_DE_COMPARACAO") or "").strip()
+        resultado["TIPO_DE_OBRA"] = (
+            "Análise comparativa entre duas obras audiovisuais"
+            + (f"; eixo: {eixo}" if eixo else "")
+        )
+    return resultado
+
+
+def _limpar_markdown(texto: str) -> str:
+    limpo = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", texto)
+    limpo = limpo.replace("**", "").replace("__", "").replace("`", "")
+    limpo = re.sub(r"^\s*(?:>\s*|#{1,6}\s*)", "", limpo)
+    limpo = re.sub(r"^\s*(?:\d+[.)]|[-*•])\s+", "", limpo)
+    return re.sub(r"\s+", " ", limpo).strip()
+
+
+def _unicos(textos: list[str], *, limite: int = 8) -> list[str]:
+    vistos: set[str] = set()
+    resultado: list[str] = []
+    for texto in textos:
+        chave = texto.casefold()
+        if texto and chave not in vistos:
+            vistos.add(chave)
+            resultado.append(texto)
+        if len(resultado) >= limite:
+            break
+    return resultado
+
+
+def extrair_perguntas(resposta: str) -> list[str]:
+    """Extrai perguntas selecionáveis de uma resposta da Etapa 2.1.
+
+    Prioriza linhas ``PERGUNTA:`` geradas para importação pelo Fluxo e cai
+    para listas numeradas/com marcadores quando a resposta veio de outro
+    prompt ou foi editada pela IA.
+    """
+    explicitas = [
+        _limpar_markdown(match.group(1))
+        for match in re.finditer(
+            r"(?im)^\s*(?:[-*•]\s*)?PERGUNTA\s*:\s*(.+)$", resposta
+        )
+    ]
+    if explicitas:
+        return _unicos([item for item in explicitas if len(item) >= 10])
+
+    itens: list[str] = []
+    atual: list[str] = []
+    for linha in resposta.splitlines():
+        if re.match(r"^\s*(?:\d+[.)]|[-*•])\s+", linha):
+            if atual:
+                itens.append(" ".join(atual))
+            atual = [linha.strip()]
+        elif atual and linha.strip():
+            atual.append(linha.strip())
+    if atual:
+        itens.append(" ".join(atual))
+    if not itens:
+        itens = [trecho.strip() for trecho in re.split(r"\n\s*\n", resposta)]
+
+    perguntas: list[str] = []
+    for item in itens:
+        limpo = _limpar_markdown(item)
+        if "?" not in limpo:
+            continue
+        pergunta = limpo.split("?", 1)[0].strip() + "?"
+        # Formatos como "Forma: Como a câmera...?" guardam a pergunta após ":".
+        if ":" in pergunta:
+            prefixo, _, resto = pergunta.partition(":")
+            if 0 < len(prefixo) <= 70 and len(resto.strip()) >= 12:
+                pergunta = resto.strip()
+        if len(pergunta) >= 12:
+            perguntas.append(pergunta)
+    return _unicos(perguntas)
+
+
+def extrair_sequencias_sugeridas(resposta: str) -> list[str]:
+    """Extrai sugestões de sequência para alimentar a Etapa 2.3."""
+    explicitas = [
+        _limpar_markdown(match.group(1))
+        for match in re.finditer(
+            r"(?im)^\s*(?:[-*•]\s*)?SEQU[ÊE]NCIA(?:_SUGERIDA)?\s*:\s*(.+)$",
+            resposta,
+        )
+    ]
+    if explicitas:
+        return _unicos([item for item in explicitas if len(item) >= 8], limite=5)
+
+    sugestoes: list[str] = []
+    padrao_tempo = re.compile(r"(?:\b\d{1,2}:\d{2}(?::\d{2})?\b|\bT\d+\s*:\s*E\d+\b)", re.I)
+    palavras = ("sequência", "sequencia", "cena", "abertura", "clímax", "climax", "desfecho")
+    for linha in resposta.splitlines():
+        limpa = _limpar_markdown(linha)
+        if padrao_tempo.search(limpa) and any(
+            palavra in limpa.casefold() for palavra in palavras
+        ):
+            sugestoes.append(limpa[:260])
+    return _unicos(sugestoes, limite=5)
+
+
+def extrair_resumo_da_resposta(resposta: str) -> str:
+    """Extrai um resumo curto de continuidade de uma resposta salva."""
+    match = re.search(r"(?im)^\s*(?:[-*•]\s*)?RESUMO\s*:\s*(.+)$", resposta)
+    if match:
+        return _limpar_markdown(match.group(1))[:700]
+    for paragrafo in re.split(r"\n\s*\n", resposta):
+        limpo = _limpar_markdown(paragrafo)
+        if len(limpo) >= 50 and not limpo.casefold().startswith("dados para o fluxo"):
+            return limpo[:700]
+    return ""
+
+
+def extrair_fontes(resposta: str) -> list[str]:
+    """Extrai linhas de fontes e URLs citadas em uma resposta."""
+    fontes = [
+        _limpar_markdown(match.group(1))
+        for match in re.finditer(r"(?im)^\s*(?:[-*•]\s*)?FONTE\s*:\s*(.+)$", resposta)
+    ]
+    fontes.extend(re.findall(r"https?://[^\s)\]]+", resposta))
+    return _unicos(fontes, limite=20)
+
+
+def extrair_dados_da_resposta(resposta: str) -> dict[str, object]:
+    """Estrutura os dados importáveis de uma resposta de qualquer etapa."""
+    return {
+        "resumo": extrair_resumo_da_resposta(resposta),
+        "perguntas": extrair_perguntas(resposta),
+        "sequencias_sugeridas": extrair_sequencias_sugeridas(resposta),
+        "fontes": extrair_fontes(resposta),
+    }
+
+
+def _instrucao_dados_fluxo(etapa_id: str) -> str:
+    linhas = [
+        "",
+        "---",
+        "Instrução de continuidade do Fluxo: ao final da resposta principal, "
+        "acrescente uma seção curta intitulada `## Dados para o Fluxo`, com:",
+        "- RESUMO: até 3 frases com os achados que precisam ser lembrados nas próximas etapas.",
+    ]
+    if etapa_id == "2.1":
+        linhas.append(
+            "- Uma linha `PERGUNTA:` para cada pergunta proposta, apenas com a pergunta."
+        )
+    if etapa_id in ("1", "1a", "1b", "1s"):
+        linhas.append(
+            "- Até 3 linhas `SEQUENCIA_SUGERIDA:` com sequências férteis para close reading, incluindo minutagem ou episódio quando tiver confiança."
+        )
+    if etapa_id in ("r", "3"):
+        linhas.append(
+            "- Uma linha `FONTE:` para cada fonte essencial realmente consultada ou recomendada, sem inventar URLs."
+        )
+    linhas.append(
+        "Não deixe essa seção substituir nem resumir a análise pedida acima."
+    )
+    return "\n".join(linhas)
+
+
+def gerar_prompt_sessao(
+    etapa_id: str,
+    valores: dict[str, str],
+    *,
+    trilha: str = "padrao",
+    respostas: dict[str, str] | None = None,
+    incluir_contexto: bool = False,
+    incluir_dados_fluxo: bool = True,
+    incluir_dossie: bool = True,
+    diretorio: Path | None = None,
+) -> str:
+    """Gera um prompt contextualizado para uso dentro de uma sessão guiada."""
+    canonica = normalizar_etapa(etapa_id)
+    valores_etapa = _valores_para_etapa_da_sessao(canonica, valores, trilha)
+    prompt = gerar_prompt(
+        canonica, valores_etapa, estrito=False, diretorio=diretorio
+    )
+
+    dossie = (valores.get("DOSSE_DE_FONTES") or "").strip()
+    if incluir_dossie and dossie and canonica in ("1", "1a", "1b", "1s", "2.2", "3", "4"):
+        prompt += (
+            "\n\n---\n"
+            "Contexto factual e fontes reunidos na sessão (use para fatos "
+            "externos; não substitui as evidências formais da própria obra):\n\n"
+            + dossie[:10000]
+        )
+
+    if incluir_contexto and respostas:
+        trechos: list[str] = []
+        for anterior in etapas_da_sessao(
+            trilha, incluir_pesquisa=True, incluir_close_reading=True
+        ):
+            if anterior == canonica:
+                break
+            resposta = (respostas.get(anterior) or "").strip()
+            if not resposta:
+                continue
+            resumo = extrair_resumo_da_resposta(resposta) or resposta[:1800]
+            trechos.append(f"### Etapa {anterior}\n{resumo}")
+        if trechos:
+            prompt += (
+                "\n\n---\n"
+                "Pacote de continuidade da sessão (resumo do que já foi "
+                "levantado; use como contexto, sem repetir tudo):\n\n"
+                + "\n\n".join(trechos)[:12000]
+            )
+
+    if incluir_dados_fluxo:
+        prompt += "\n" + _instrucao_dados_fluxo(canonica)
+    return prompt
+
+
+def gerar_prompt_maestro(
+    valores: dict[str, str],
+    *,
+    trilha: str = "padrao",
+    incluir_pesquisa: bool = True,
+    incluir_close_reading: bool = True,
+    diretorio: Path | None = None,
+) -> str:
+    """Monta um único roteiro para a IA conduzir a sessão inteira no chat."""
+    canonica = normalizar_trilha(trilha)
+    ordem = etapas_da_sessao(
+        canonica,
+        incluir_pesquisa=incluir_pesquisa,
+        incluir_close_reading=incluir_close_reading,
+    )
+    dossie = (valores.get("DOSSE_DE_FONTES") or "").strip()
+    valores_prompts = dict(valores)
+    valores_prompts["DOSSE_DE_FONTES"] = ""
+    if canonica == "comparativa":
+        foco = " × ".join(
+            trecho
+            for trecho in (
+                (valores.get("OBRA_A") or "").strip(),
+                (valores.get("OBRA_B") or "").strip(),
+            )
+            if trecho
+        ) or "[duas obras a comparar]"
+    else:
+        foco = (valores.get("TITULO_DA_OBRA") or "[obra]").strip()
+
+    partes = [
+        "# Sessão guiada do Fluxo — Prompt Maestro",
+        "",
+        f"Você será o condutor de uma análise completa de **{foco}**, usando "
+        "os roteiros abaixo **um de cada vez, nesta ordem**. Não execute todas "
+        "as etapas em uma única resposta.",
+        "",
+        "## Como conduzir",
+        "",
+        "1. Comece somente pela primeira etapa do roteiro e pare ao concluí-la, "
+        "dizendo qual é a próxima etapa.",
+        "2. Quando eu responder “continue”, avance para a etapa seguinte sem "
+        "pedir que eu cole outro prompt.",
+        "3. Na Etapa 2.1, pare obrigatoriamente e espere eu escolher uma "
+        "pergunta (ou formular a minha). Use exatamente essa escolha na 2.2.",
+        "4. Antes da Etapa 2.3, se ela estiver no roteiro, pergunte qual "
+        "sequência quero dissecar ou ofereça opções concretas.",
+        "5. Mantenha as regras de rigor de cada roteiro durante toda a "
+        "conversa. Diferencie fato de interpretação e marque incertezas.",
+        "6. Ao fim de cada etapa, acrescente `## Dados para o Fluxo` com um "
+        "item `RESUMO:`; na 2.1, repita cada opção em uma linha `PERGUNTA:`; "
+        "nas análises 360°, sugira até 3 linhas `SEQUENCIA_SUGERIDA:`.",
+        "7. Não pule a minha hipótese inicial: ela deve ser registrada antes "
+        "da sua interpretação e retomada na síntese.",
+    ]
+    if dossie:
+        partes.extend(
+            [
+                "",
+                "## Dossiê factual já reunido",
+                "",
+                "Use este material para fatos externos, verificando conflitos; "
+                "ele não substitui evidências da obra:",
+                "",
+                dossie[:10000],
+            ]
+        )
+
+    substituicoes = {
+        "[PREENCHER: PERGUNTA_ESCOLHIDA]": (
+            "a pergunta que eu escolher quando você pausar após a Etapa 2.1"
+        ),
+        "[PREENCHER: SEQUENCIA_ESCOLHIDA]": (
+            "a sequência que combinarmos na pausa anterior à Etapa 2.3"
+        ),
+    }
+    for etapa_id in ordem:
+        etapa = ETAPAS[etapa_id]
+        prompt = gerar_prompt_sessao(
+            etapa_id,
+            valores_prompts,
+            trilha=canonica,
+            incluir_contexto=False,
+            incluir_dados_fluxo=False,
+            incluir_dossie=False,
+            diretorio=diretorio,
+        )
+        for pendente, texto in substituicoes.items():
+            prompt = prompt.replace(pendente, texto)
+        partes.extend(
+            [
+                "",
+                "---",
+                "",
+                f"## Roteiro — Etapa {etapa_id}: {etapa.nome}",
+                "",
+                prompt,
+            ]
+        )
+
+    partes.extend(
+        [
+            "",
+            "---",
+            "",
+            "Comece agora apenas pela primeira etapa do roteiro.",
+        ]
+    )
+    return "\n".join(partes).strip()
+
+
+def criar_manifesto_sessao(
+    valores: dict[str, str],
+    *,
+    trilha: str = "padrao",
+    incluir_pesquisa: bool = True,
+    incluir_close_reading: bool = True,
+) -> dict[str, object]:
+    """Cria o manifesto serializável de uma sessão guiada."""
+    ordem = etapas_da_sessao(
+        trilha,
+        incluir_pesquisa=incluir_pesquisa,
+        incluir_close_reading=incluir_close_reading,
+    )
+    return {
+        "versao": 1,
+        "trilha": normalizar_trilha(trilha),
+        "campos": {
+            chave: valores.get(chave, "")
+            for chave in PLACEHOLDERS
+            if chave != "DATA_DA_ANALISE"
+        },
+        "etapas": [
+            {
+                "id": etapa.id,
+                "nome": etapa.nome,
+                "prompt": etapa.arquivo_saida,
+                "status": "pendente",
+                "resposta": "",
+            }
+            for etapa in (ETAPAS[etapa_id] for etapa_id in ordem)
+        ],
+    }
 
 
 def gerar_registro(valores: dict[str, str]) -> str:

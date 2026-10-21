@@ -37,3 +37,14 @@ Realize uma análise aprofundada e detalhada da obra audiovisual **Cidade de Deu
 Formato da resposta:
 - Use um cabeçalho para cada uma das 7 dimensões, com 2 a 4 parágrafos (ou tópicos equivalentes) por dimensão, sempre com exemplos de cenas ou sequências específicas fundamentando cada afirmação.
 - Ao final, inclua uma tabela-resumo "Dimensão → Principal achado", com uma linha por dimensão.
+
+---
+Contexto factual e fontes reunidos na sessão (use para fatos externos; não substitui as evidências formais da própria obra):
+
+Referência inicial para verificar na Etapa R: Cidade de Deus (2002), direção de Fernando Meirelles e codireção de Kátia Lund, baseado no romance de Paulo Lins. Conferir ficha completa, produção, recepção e indicações em fontes primárias e especializadas antes de usar qualquer dado externo.
+
+---
+Instrução de continuidade do Fluxo: ao final da resposta principal, acrescente uma seção curta intitulada `## Dados para o Fluxo`, com:
+- RESUMO: até 3 frases com os achados que precisam ser lembrados nas próximas etapas.
+- Até 3 linhas `SEQUENCIA_SUGERIDA:` com sequências férteis para close reading, incluindo minutagem ou episódio quando tiver confiança.
+Não deixe essa seção substituir nem resumir a análise pedida acima.

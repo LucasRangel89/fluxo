@@ -1,7 +1,7 @@
 "use strict";
 
 /* ============================================================================
-   Fluxo — interface web (Fases 2, 3 e 4)
+   Fluxo — interface web (Fases 2 a 5)
 
    Lê os templates de `prompts/` em tempo real (mesma fonte da CLI), extrai o
    prompt entre os marcadores HTML e preenche os placeholders a partir do
@@ -87,13 +87,18 @@ const CAMPOS = {
     rotulo: "modo de análise",
     pendente: "[modo de análise]",
   },
+  DOSSE_DE_FONTES: {
+    id: "dossie-fontes",
+    rotulo: "dossiê de fontes",
+    pendente: "[dossiê de fontes]",
+  },
 };
 
 const IDS_CAMPOS = Object.values(CAMPOS).map((c) => c.id);
 
 /* Placeholders opcionais: nunca contam como pendentes (espelha OPCIONAIS
    em core.py). O valor de MODO_DE_ANALISE vem do seletor de modo. */
-const OPCIONAIS = new Set(["MODO_DE_ANALISE"]);
+const OPCIONAIS = new Set(["MODO_DE_ANALISE", "DOSSE_DE_FONTES"]);
 
 const MODOS_DE_ANALISE = {
   padrao: "",
@@ -119,6 +124,16 @@ const ETAPAS = [
     descricao:
       "Preparação (opcional, mas recomendada): identifica a obra, registra a sua hipótese ANTES de a IA opinar e calibra a conversa ao seu objetivo e nível.",
     extras: ["TIPO_DE_OBRA", "META_DA_ANALISE", "NIVEL_DO_USUARIO", "IMPRESSOES_INICIAIS"],
+  },
+  {
+    id: "r",
+    rotulo: "Etapa R",
+    nome: "Pesquisa e fontes",
+    arquivo: "prompts/etapa-00r-pesquisa-fontes.md",
+    saida: "00r-prompt-pesquisa-fontes.md",
+    descricao:
+      "Opcional: reúne fatos verificáveis, ficha técnica, recepção, fontes e incertezas antes da interpretação. Use preferencialmente em uma IA com navegação ou complete com o dossiê da sessão.",
+    extras: ["TIPO_DE_OBRA"],
   },
   {
     id: "1",

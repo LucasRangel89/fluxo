@@ -12,3 +12,14 @@ Nossa análise foi muito produtiva. Para consolidar todo o conhecimento gerado s
 
    Cite apenas fontes de cuja existência você tenha boa confiança; se estiver incerto sobre título, autor ou ano exatos, avise explicitamente ("a confirmar") em vez de inventar a referência.
 7. **Ficha-Resumo da Análise:** Feche com uma ficha enxuta em tópicos, pronta para eu salvar nas minhas notas: obra e diretor; a tese central da nossa análise; os 3 achados mais importantes; uma cena para reassistir com atenção; como a minha leitura mudou em relação à hipótese inicial (se houver); e a próxima obra sugerida para continuar o ciclo.
+
+---
+Contexto factual e fontes reunidos na sessão (use para fatos externos; não substitui as evidências formais da própria obra):
+
+Referência inicial para verificar na Etapa R: Cidade de Deus (2002), direção de Fernando Meirelles e codireção de Kátia Lund, baseado no romance de Paulo Lins. Conferir ficha completa, produção, recepção e indicações em fontes primárias e especializadas antes de usar qualquer dado externo.
+
+---
+Instrução de continuidade do Fluxo: ao final da resposta principal, acrescente uma seção curta intitulada `## Dados para o Fluxo`, com:
+- RESUMO: até 3 frases com os achados que precisam ser lembrados nas próximas etapas.
+- Uma linha `FONTE:` para cada fonte essencial realmente consultada ou recomendada, sem inventar URLs.
+Não deixe essa seção substituir nem resumir a análise pedida acima.

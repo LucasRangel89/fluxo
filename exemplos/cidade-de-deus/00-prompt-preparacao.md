@@ -13,3 +13,8 @@ Nesta etapa de preparação, faça apenas isto:
 4. Confirme que está pronto para a análise completa, calibrando profundidade e vocabulário ao meu nível e objetivo ao longo de toda a conversa.
 
 Seja breve: isto é só a preparação.
+
+---
+Instrução de continuidade do Fluxo: ao final da resposta principal, acrescente uma seção curta intitulada `## Dados para o Fluxo`, com:
+- RESUMO: até 3 frases com os achados que precisam ser lembrados nas próximas etapas.
+Não deixe essa seção substituir nem resumir a análise pedida acima.
