@@ -45,6 +45,10 @@ A UI fica em `index.html` + `assets/` e lê os templates de `prompts/` via
 do repo e abra `http://localhost:8000`. A lista de etapas em `assets/app.js`
 (arquivos e nomes de saída) **espelha** `ETAPAS` em `src/fluxo/core.py`: se
 mudar um lado, mude o outro — `tests/test_web.py` cobra essa consistência.
+Ao mexer nas trilhas, atualize também `TRILHAS` no Python e em
+`assets/sessao.js`; os testes da Fase 5 conferem esse espelho. Não introduza
+uma chave de API do projeto nem um backend obrigatório: integrações de IA
+devem ser opt-in e pertencer à conta, à chave ou ao dispositivo do usuário.
 
 ## Sugerindo uma variação ou tradução
 

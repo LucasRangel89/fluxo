@@ -1,0 +1,72 @@
+{
+  "versao": 1,
+  "trilha": "padrao",
+  "campos": {
+    "TITULO_DA_OBRA": "Cidade de Deus (2002)",
+    "DIRETOR_OU_CRIADOR": "Fernando Meirelles e Kátia Lund",
+    "TIPO_DE_OBRA": "Filme (longa-metragem de ficção)",
+    "META_DA_ANALISE": "Estudar a fundo um clássico do cinema brasileiro",
+    "NIVEL_DO_USUARIO": "Intermediário — leio críticas e quero aprofundar a técnica",
+    "IMPRESSOES_INICIAIS": "Na primeira vez que vi, achei a violência espetacularizada demais, quase um videoclipe. Hoje desconfio que a forma acelerada é justamente o tema — mas ainda não sei dizer se o filme critica ou celebra esse mundo.",
+    "PERGUNTA_ESCOLHIDA": "De que forma a montagem acelerada e fragmentada, combinada à narração em off de Buscapé, transforma a violência em espetáculo — e como o filme lida com a tensão ética entre estetizar essa violência e, ao mesmo tempo, criticá-la?",
+    "SEQUENCIA_ESCOLHIDA": "A abertura completa: a faca sendo amolada, a fuga e a perseguição ao frango, até o plano em que Buscapé fica preso entre o bando de Zé Pequeno e a polícia (≈0:00–3:30)",
+    "OBRA_A": "Cidade de Deus (2002)",
+    "DIRETOR_A": "Fernando Meirelles e Kátia Lund",
+    "OBRA_B": "Tropa de Elite (2007)",
+    "DIRETOR_B": "José Padilha",
+    "EIXO_DE_COMPARACAO": "Duas visões da violência urbana brasileira: a favela pelos olhos de quem mora nela (Buscapé, o fotógrafo) × pelos olhos do Estado (Cap. Nascimento, o BOPE) — forma e ética do olhar",
+    "MODO_DE_ANALISE": "",
+    "DOSSE_DE_FONTES": "Referência inicial para verificar na Etapa R: Cidade de Deus (2002), direção de Fernando Meirelles e codireção de Kátia Lund, baseado no romance de Paulo Lins. Conferir ficha completa, produção, recepção e indicações em fontes primárias e especializadas antes de usar qualquer dado externo."
+  },
+  "etapas": [
+    {
+      "id": "0",
+      "nome": "Preparação",
+      "prompt": "00-prompt-preparacao.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "r",
+      "nome": "Pesquisa e Dossiê de Fontes",
+      "prompt": "00r-prompt-pesquisa-fontes.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "1",
+      "nome": "Análise Audiovisual 360°",
+      "prompt": "01-prompt-analise-360.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "2.1",
+      "nome": "Proposta de Aprofundamento Crítico",
+      "prompt": "02.1-prompt-proposta-aprofundamento.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "2.2",
+      "nome": "Execução da Análise Focada",
+      "prompt": "02.2-prompt-analise-focada.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "2.3",
+      "nome": "Close Reading de uma Sequência",
+      "prompt": "02.3-prompt-close-reading.md",
+      "status": "pendente",
+      "resposta": ""
+    },
+    {
+      "id": "3",
+      "nome": "Consolidação, Diálogos e Expansão",
+      "prompt": "03-prompt-sintese-conexoes.md",
+      "status": "pendente",
+      "resposta": ""
+    }
+  ]
+}

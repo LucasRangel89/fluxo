@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fluxo 🎬 — Análise de Filmes e Séries com IA</title>
-<meta name="description" content="Monte em segundos os prompts do Fluxo: preparação, análise 360° (com variantes para séries e comparação de obras), aprofundamento crítico, close reading e síntese — para colar na sua IA favorita.">
+<meta name="description" content="Informe uma obra uma única vez e o Fluxo monta uma sessão guiada ou um Prompt Maestro: pesquisa de fontes, análise 360°, aprofundamento, close reading e síntese.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <link rel="stylesheet" href="assets/app.css">
 </head>
@@ -13,108 +13,302 @@
 <header class="topo">
   <div class="container">
     <p class="kicker">Fluxo de prompts · Filmes &amp; Séries</p>
-    <h1>🎬 Fluxo <span>análise de obras audiovisuais com IA</span></h1>
-    <p class="sub">Preencha os dados da obra, escolha a etapa e copie o prompt pronto para colar na sua IA favorita. Uma análise em três atos: <strong>mapear → aprofundar → sintetizar</strong> — começando pela sua própria hipótese.</p>
+    <h1>🎬 Fluxo <span>uma sessão guiada de análise audiovisual com IA</span></h1>
+    <p class="sub">Conte a obra <strong>uma única vez</strong>. O Fluxo monta a jornada inteira — pesquisa, mapa 360°, aprofundamento e síntese — como cartões guiados ou como um <strong>Prompt Maestro</strong> para uma única conversa.</p>
     <div class="faixa-filme" aria-hidden="true"></div>
   </div>
 </header>
 
 <main class="container">
   <noscript>
-    <p class="aviso aviso-erro">Esta página precisa de JavaScript para montar os prompts. Sem ele, use os templates em <code>prompts/</code> ou a CLI (<code>fluxo gerar</code>).</p>
+    <p class="aviso aviso-erro">Esta página precisa de JavaScript para montar os prompts. Sem ele, use os templates em <code>prompts/</code> ou a CLI (<code>fluxo gerar</code>, <code>fluxo maestro</code> ou <code>fluxo sessao</code>).</p>
   </noscript>
 
   <div id="aviso-erro" class="aviso aviso-erro" hidden>
-    <strong>Não consegui carregar os templates.</strong> Esta página lê os arquivos de <code>prompts/</code> em tempo real e, por isso, precisa ser servida por HTTP (abrir o arquivo direto do disco não funciona). Na raiz do repositório, rode <code>python -m http.server 8000</code> e acesse <code>http://localhost:8000</code> — ou use a CLI (<code>fluxo gerar</code>).
+    <strong>Não consegui carregar os templates.</strong> Esta página lê os arquivos de <code>prompts/</code> em tempo real e, por isso, precisa ser servida por HTTP. Na raiz do repositório, rode <code>python -m http.server 8000</code> — ou use a CLI.
   </div>
 
-  <section class="card" aria-labelledby="h-obra">
-    <h2 id="h-obra">1 · Sua obra</h2>
+  <section class="card card-destaque" aria-labelledby="h-sessao">
+    <p class="rotulo-secao">Comece aqui</p>
+    <h2 id="h-sessao">1 · Monte sua sessão</h2>
+    <p class="texto-apoio">Busque a obra para preencher metadados automaticamente ou informe tudo manualmente. Ao montar a sessão, todas as etapas relevantes já nascem preenchidas com estes dados.</p>
+
+    <div class="busca-obra" aria-labelledby="h-busca">
+      <h3 id="h-busca">Encontrar a obra</h3>
+      <div class="grid-busca">
+        <div class="campo">
+          <label for="busca-obra">Buscar em bases abertas</label>
+          <input id="busca-obra" type="text" placeholder="Ex.: Cidade de Deus, Dark, Duna..." autocomplete="off">
+          <small>Fontes: Wikipedia, Wikidata e TVMaze. Você escolhe o resultado; nada é aplicado sem seu clique.</small>
+        </div>
+        <div class="campo">
+          <label for="busca-destino">Preencher</label>
+          <select id="busca-destino">
+            <option value="principal">Obra principal</option>
+            <option value="obra-a">Obra A da comparação</option>
+            <option value="obra-b">Obra B da comparação</option>
+          </select>
+        </div>
+        <button id="btn-buscar-obra" class="btn btn-busca" type="button">🔎 Buscar</button>
+      </div>
+      <p id="busca-status" class="status-inline" role="status" aria-live="polite"></p>
+      <div id="busca-resultados" class="resultados-busca"></div>
+      <div id="metadados-resumo" class="metadados-resumo" hidden></div>
+    </div>
+
     <div class="grid-2">
       <div class="campo">
         <label for="titulo">Título do filme/série</label>
         <input id="titulo" type="text" placeholder="Ex.: Cidade de Deus (2002) · Dark — Temporada 1 (2017)" autocomplete="off">
-        <small>Inclua o ano para não confundir com remakes e homônimos. Em séries, inclua a temporada.</small>
+        <small>Inclua o ano e, em séries, a temporada para evitar confusão.</small>
       </div>
       <div class="campo">
-        <label for="diretor">Diretor(a) / criador(a)</label>
+        <label for="diretor">Diretor(a) / criador(a) / showrunner</label>
         <input id="diretor" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
-        <small>Usado nas Etapas 0, 1, 1A, 1B e 1S. Em séries, pode ser o(a) showrunner.</small>
+        <small>Pode ser preenchido pela busca e corrigido por você.</small>
       </div>
     </div>
-    <div class="campo">
-      <label for="modo">Modo de análise</label>
-      <select id="modo">
-        <option value="padrao">Padrão (para iniciados)</option>
-        <option value="iniciante">Iniciante — explica os termos técnicos</option>
-        <option value="academico">Acadêmico — rigor teórico, com autores e conceitos</option>
-      </select>
-      <small>Calibra as etapas de abertura (1, 1A, 1S e 4) — e a calibragem vale para a conversa toda.</small>
+
+    <div class="grid-2 espacado">
+      <div class="campo">
+        <label for="trilha">Tipo de jornada</label>
+        <select id="trilha">
+          <option value="padrao">Filme — Análise 360° de uma vez</option>
+          <option value="dois-tempos">Filme — 360° em dois tempos (texto + contexto)</option>
+          <option value="serie">Série ou temporada — Análise 360° seriada</option>
+          <option value="comparativa">Comparar duas obras</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="tipo">Formato da obra</label>
+        <input id="tipo" type="text" placeholder="Filme · Série — Temporada 1 · Episódio T2:E5" autocomplete="off">
+      </div>
     </div>
-    <div class="acoes-linha">
+
+    <fieldset id="painel-comparativa" class="painel-comparativa" hidden>
+      <legend>As duas obras da comparação</legend>
+      <div class="grid-2">
+        <div class="campo">
+          <label for="obra-a">Obra A</label>
+          <input id="obra-a" type="text" placeholder="Ex.: Cidade de Deus (2002)" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="diretor-a">Diretor(a) / criador(a) da obra A</label>
+          <input id="diretor-a" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="obra-b">Obra B</label>
+          <input id="obra-b" type="text" placeholder="Ex.: Tropa de Elite (2007)" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="diretor-b">Diretor(a) / criador(a) da obra B</label>
+          <input id="diretor-b" type="text" placeholder="Ex.: José Padilha" autocomplete="off">
+        </div>
+      </div>
+      <div class="campo espacado">
+        <label for="eixo">Eixo da comparação</label>
+        <textarea id="eixo" rows="3" placeholder="Ex.: duas visões da violência urbana brasileira — forma e ética do olhar"></textarea>
+        <small>O eixo decide em que termos as obras serão confrontadas.</small>
+      </div>
+    </fieldset>
+
+    <div class="grid-2 espacado">
+      <div class="campo">
+        <label for="objetivo">Seu objetivo</label>
+        <input id="objetivo" type="text" placeholder="Estudar · escrever uma resenha · entender por prazer" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="nivel">Seu nível</label>
+        <input id="nivel" type="text" placeholder="Iniciante curioso · Intermediário · Estudante de cinema" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="campo espacado">
+      <label for="impressoes">Sua impressão ou hipótese inicial</label>
+      <textarea id="impressoes" rows="3" placeholder="Antes de a IA opinar: o que você achou, espera ou desconfia sobre a obra?"></textarea>
+      <small>Ela será registrada antes da análise e retomada na síntese. Pode deixar em branco — a sessão usará um ponto de partida neutro.</small>
+    </div>
+
+    <div class="grid-2 espacado">
+      <div class="campo">
+        <label for="modo">Linguagem da análise</label>
+        <select id="modo">
+          <option value="padrao">Padrão (para iniciados)</option>
+          <option value="iniciante">Iniciante — explica os termos técnicos</option>
+          <option value="academico">Acadêmico — rigor teórico e conceitos</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="ia-destino">IA para abrir no modo manual</label>
+        <select id="ia-destino">
+          <option value="manual">Só copiar (eu escolho depois)</option>
+          <option value="chatgpt">ChatGPT</option>
+          <option value="claude">Claude</option>
+          <option value="gemini">Gemini</option>
+          <option value="perplexity">Perplexity</option>
+          <option value="copilot">Microsoft Copilot</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="opcoes-sessao">
+      <fieldset>
+        <legend>Como quer conduzir?</legend>
+        <label class="opcao-radio">
+          <input id="modo-sessao-guiada" type="radio" name="modo-sessao" value="guiada" checked>
+          <span><strong>Guiada no Fluxo</strong><small>Cartões por etapa, respostas salvas e próxima ação automática.</small></span>
+        </label>
+        <label class="opcao-radio">
+          <input id="modo-sessao-maestro" type="radio" name="modo-sessao" value="maestro">
+          <span><strong>Conversa única</strong><small>Um Prompt Maestro para a IA conduzir todas as etapas no mesmo chat.</small></span>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Incluir na jornada</legend>
+        <label class="opcao-check"><input id="incluir-pesquisa" type="checkbox" checked> Pesquisa e dossiê de fontes (Etapa R)</label>
+        <label class="opcao-check"><input id="incluir-close" type="checkbox" checked> Close reading de uma sequência (Etapa 2.3)</label>
+        <label class="opcao-check"><input id="incluir-contexto" type="checkbox"> Incluir resumos anteriores nos próximos prompts <small>(útil se trocar de IA ou de conversa)</small></label>
+      </fieldset>
+    </div>
+
+    <div class="acoes acoes-principais">
+      <button id="btn-montar-sessao" class="btn btn-primario" type="button">✨ Montar minha sessão</button>
       <button id="btn-exemplo" class="btn btn-suave" type="button">🍿 Usar o exemplo (Cidade de Deus)</button>
       <button id="btn-limpar" class="btn btn-suave" type="button">Nova análise (limpar)</button>
+    </div>
+
+    <details class="detalhes" id="detalhes-dossie">
+      <summary>🔎 Dossiê factual e fontes</summary>
+      <p class="texto-apoio">Este material acompanha a Etapa R e as análises. Ele pode nascer dos metadados selecionados, de uma pesquisa feita em outra IA ou de trechos e links colados por você.</p>
+      <div class="campo">
+        <label for="dossie-fontes">Metadados, fatos, links e trechos</label>
+        <textarea id="dossie-fontes" rows="8" placeholder="Cole aqui o dossiê gerado por uma IA com pesquisa, links de fontes ou recortes relevantes..."></textarea>
+      </div>
+      <div class="acoes-linha">
+        <button id="btn-gerar-dossie-metadados" class="btn" type="button">Gerar a partir dos metadados</button>
+        <button id="btn-limpar-dossie" class="btn btn-suave" type="button">Limpar dossiê</button>
+      </div>
+      <div id="links-pesquisa" class="links-pesquisa" aria-label="Buscas sugeridas"></div>
+    </details>
+
+    <details class="detalhes" id="detalhes-provedor">
+      <summary>⚙️ Executar dentro do Fluxo (opcional)</summary>
+      <p class="texto-apoio"><strong>O projeto não possui chave de IA nem backend.</strong> O modo manual é o padrão gratuito. As alternativas abaixo usam a conta, a chave ou o dispositivo do próprio usuário.</p>
+      <div class="campo">
+        <label for="provedor">Forma de execução</label>
+        <select id="provedor">
+          <option value="manual">Manual — copiar e usar minha IA (recomendado)</option>
+          <option value="puter">Puter — executar com minha conta Puter</option>
+          <option value="byok">Minha chave — API compatível com OpenAI</option>
+          <option value="local">IA local do navegador — experimental</option>
+        </select>
+      </div>
+
+      <div id="config-puter" class="config-provedor" hidden>
+        <div class="campo">
+          <label for="puter-modelo">Modelo no Puter (opcional)</label>
+          <input id="puter-modelo" type="text" placeholder="Deixe em branco para o padrão do Puter" autocomplete="off">
+          <small>Ao executar, o Puter poderá pedir login. O uso é debitado da conta/cota do usuário, não do projeto.</small>
+        </div>
+      </div>
+
+      <div id="config-byok" class="config-provedor" hidden>
+        <div class="grid-2">
+          <div class="campo">
+            <label for="byok-endpoint">Endpoint de chat</label>
+            <input id="byok-endpoint" type="text" value="https://openrouter.ai/api/v1/chat/completions" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="byok-modelo">Modelo</label>
+            <input id="byok-modelo" type="text" placeholder="Ex.: nome/modelo do provedor" autocomplete="off">
+          </div>
+        </div>
+        <div class="campo espacado">
+          <label for="byok-chave">Sua chave de API</label>
+          <input id="byok-chave" type="password" placeholder="Fica somente neste navegador" autocomplete="off">
+          <label class="opcao-check"><input id="byok-lembrar" type="checkbox"> Manter nesta aba/sessão do navegador</label>
+          <small>Nunca usamos uma chave do projeto e a chave não entra nas exportações da sessão.</small>
+        </div>
+      </div>
+
+      <div id="config-local" class="config-provedor" hidden>
+        <p class="texto-apoio">Usa a Prompt API do navegador quando disponível. É mais adequada a resumos e microtarefas do que à análise completa de obras longas.</p>
+        <button id="btn-resumir-local" class="btn" type="button">Resumir respostas salvas com IA local</button>
+      </div>
+
+      <div class="acoes-linha">
+        <button id="btn-testar-provedor" class="btn" type="button">Testar execução</button>
+        <span id="provedor-status" class="status-inline" role="status" aria-live="polite"></span>
+      </div>
+    </details>
+  </section>
+
+  <section id="sessao-card" class="card card-sessao" aria-labelledby="h-jornada" hidden>
+    <div class="prompt-topo">
+      <div>
+        <p class="rotulo-secao">Sua jornada</p>
+        <h2 id="h-jornada">2 · Sessão guiada</h2>
+      </div>
+      <span id="sessao-progresso-texto" class="contador"></span>
+    </div>
+    <progress id="sessao-progresso" max="100" value="0" aria-label="Progresso da sessão"></progress>
+
+    <div class="proxima-acao" aria-live="polite">
+      <div>
+        <strong>Próxima ação</strong>
+        <p id="proxima-acao">Monte uma sessão para começar.</p>
+      </div>
+      <button id="btn-proxima-acao" class="btn btn-primario" type="button">Ir para a próxima etapa</button>
+    </div>
+
+    <div id="painel-maestro" hidden>
+      <h3>Prompt Maestro — uma conversa, todas as etapas</h3>
+      <p class="texto-apoio">Cole este roteiro uma única vez na sua IA. Ela executará uma etapa por vez, pausará para sua escolha na Etapa 2.1 e continuará quando você disser “continue”.</p>
+      <textarea id="prompt-maestro" rows="18" spellcheck="false" aria-label="Prompt Maestro"></textarea>
+      <div class="acoes">
+        <button id="btn-enviar-maestro" class="btn btn-primario" type="button">📋 Copiar e abrir minha IA</button>
+        <button id="btn-copiar-maestro" class="btn" type="button">Copiar Prompt Maestro</button>
+      </div>
+      <div class="campo espacado">
+        <label for="transcricao-maestro">Transcrição ou síntese da conversa (opcional)</label>
+        <textarea id="transcricao-maestro" rows="8" placeholder="Se quiser arquivar aqui a conversa feita com o Prompt Maestro, cole a transcrição ou os principais trechos..."></textarea>
+      </div>
+    </div>
+
+    <div id="sessao-etapas" class="sessao-etapas"></div>
+
+    <div class="acoes sessao-exportacoes">
+      <button id="btn-exportar-sessao-md" class="btn" type="button">⬇️ Exportar dossiê .md</button>
+      <button id="btn-exportar-sessao-json" class="btn" type="button">⬇️ Exportar sessão .json</button>
+      <label class="btn" for="importar-sessao">📥 Importar sessão</label>
+      <input id="importar-sessao" class="oculto" type="file" accept="application/json,.json">
+      <button id="btn-resetar-sessao" class="btn btn-suave" type="button">Apagar respostas da sessão</button>
     </div>
   </section>
 
   <section class="card" aria-labelledby="h-etapa">
-    <h2 id="h-etapa">2 · Escolha a etapa</h2>
+    <p class="rotulo-secao">Modo avançado</p>
+    <h2 id="h-etapa">3 · Prompts individuais</h2>
+    <p class="texto-apoio">Prefere controlar cada prompt separadamente? Use as etapas abaixo. Elas compartilham os mesmos dados da sessão.</p>
     <nav class="stepper" id="stepper" aria-label="Etapas do fluxo"></nav>
     <p class="etapa-desc" id="etapa-desc"></p>
 
-    <div class="campo campo-extra" data-campo="TIPO_DE_OBRA" hidden>
-      <label for="tipo">Tipo da obra</label>
-      <input id="tipo" type="text" placeholder="Ex.: Filme · Série — Temporada 1 · Episódio T2:E5 · Documentário" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="META_DA_ANALISE" hidden>
-      <label for="objetivo">Seu objetivo com a análise</label>
-      <input id="objetivo" type="text" placeholder="Ex.: Estudar para uma prova · Escrever uma resenha · Puro prazer de cinéfilo" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="NIVEL_DO_USUARIO" hidden>
-      <label for="nivel">Seu nível de familiaridade</label>
-      <input id="nivel" type="text" placeholder="Ex.: Iniciante curioso · Intermediário · Estudante de cinema" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="IMPRESSOES_INICIAIS" hidden>
-      <label for="impressoes">Suas impressões e hipótese iniciais</label>
-      <textarea id="impressoes" rows="3" placeholder="Antes de a IA opinar: o que você achou (ou espera) da obra? Sinceridade > eloquência."></textarea>
-      <small>Na Etapa 3, você compara esta leitura inicial com a final.</small>
-    </div>
     <div class="campo campo-extra" data-campo="PERGUNTA_ESCOLHIDA" hidden>
       <label for="pergunta">Pergunta escolhida (da Etapa 2.1)</label>
-      <textarea id="pergunta" rows="3" placeholder="Cole aqui a pergunta que você escolheu da lista gerada na Etapa 2.1..."></textarea>
+      <textarea id="pergunta" rows="3" placeholder="Cole aqui a pergunta escolhida ou deixe a sessão guiada preenchê-la para você..."></textarea>
       <small>Vale também formular a sua própria pergunta.</small>
     </div>
     <div class="campo campo-extra" data-campo="SEQUENCIA_ESCOLHIDA" hidden>
       <label for="sequencia">Sequência para o close reading</label>
-      <textarea id="sequencia" rows="2" placeholder="Descreva com precisão — ex.: A abertura: a perseguição ao frango (≈0:00–3:30)"></textarea>
-      <small>Quanto mais precisa (o que acontece + minutagem/episódio), menos a IA inventa detalhes.</small>
-    </div>
-    <div class="campo campo-extra" data-campo="OBRA_A" hidden>
-      <label for="obra-a">Obra A</label>
-      <input id="obra-a" type="text" placeholder="Ex.: Cidade de Deus (2002)" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="DIRETOR_A" hidden>
-      <label for="diretor-a">Diretor(a) / criador(a) da obra A</label>
-      <input id="diretor-a" type="text" placeholder="Ex.: Fernando Meirelles e Kátia Lund" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="OBRA_B" hidden>
-      <label for="obra-b">Obra B</label>
-      <input id="obra-b" type="text" placeholder="Ex.: Tropa de Elite (2007)" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="DIRETOR_B" hidden>
-      <label for="diretor-b">Diretor(a) / criador(a) da obra B</label>
-      <input id="diretor-b" type="text" placeholder="Ex.: José Padilha" autocomplete="off">
-    </div>
-    <div class="campo campo-extra" data-campo="EIXO_DE_COMPARACAO" hidden>
-      <label for="eixo">Eixo da comparação</label>
-      <textarea id="eixo" rows="3" placeholder="Ex.: Duas visões da violência urbana brasileira — a favela vista de dentro (Buscapé) × pelo Estado (Cap. Nascimento): forma e ética do olhar"></textarea>
-      <small>O eixo é o coração da Etapa 4: é ele que decide o que será comparado, em que termos.</small>
+      <textarea id="sequencia" rows="2" placeholder="Descreva com precisão — ex.: a abertura (≈0:00–3:30)"></textarea>
+      <small>Na sessão guiada, sugestões detectadas nas respostas podem preencher este campo.</small>
     </div>
   </section>
 
   <section class="card" aria-labelledby="h-prompt">
     <div class="prompt-topo">
-      <h2 id="h-prompt">3 · Seu prompt pronto</h2>
+      <h2 id="h-prompt">4 · Prompt individual pronto</h2>
       <span class="contador" id="contador"></span>
     </div>
     <p class="dica-edicao" id="dica-edicao" hidden>✏️ Você editou o texto à mão — sem problemas, copie quando estiver no ponto. <button id="btn-regenerar" class="btn-link" type="button">Regerar a partir dos campos</button></p>
@@ -124,21 +318,17 @@
       <button id="btn-copiar" class="btn btn-primario" type="button">📋 Copiar prompt</button>
       <button id="btn-baixar" class="btn" type="button">⬇️ Baixar .md</button>
     </div>
-    <ol class="como-usar">
-      <li>Copie o prompt e cole na sua IA (Claude, ChatGPT, Gemini...).</li>
-      <li>Rode as etapas <strong>na ordem e na mesma conversa</strong>: 0 → 1 → 2.1 → 2.2 → 3 (o ✓ marca as que você já copiou).</li>
-      <li>Quer mais profundidade? Troque a Etapa 1 por <strong>1A (texto) + 1B (contexto)</strong> — e use a <strong>2.3</strong> para dissecar uma sequência plano a plano.</li>
-      <li>Analisando uma <strong>série</strong>? Use a <strong>1S</strong>, pensada para temporadas. E para colocar <strong>duas obras frente a frente</strong>, vá de <strong>Etapa 4 (comparativa)</strong>.</li>
-    </ol>
   </section>
 </main>
 
 <footer class="container rodape">
-  <p>Fluxo v1.0.0 · <a href="https://github.com/LucasRangel89/fluxo">GitHub</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/docs/fluxo.md">Guia completo do fluxo</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/exemplos/cidade-de-deus/README.md">Exemplo</a></p>
-  <p>Os prompts são montados na hora, no seu navegador, a partir dos templates em <code>prompts/</code> — a mesma fonte usada pela CLI. Nada sai da sua máquina.</p>
+  <p>Fluxo v1.1.0 · <a href="https://github.com/LucasRangel89/fluxo">GitHub</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/docs/fluxo.md">Guia completo do fluxo</a> · <a href="https://github.com/LucasRangel89/fluxo/blob/main/exemplos/cidade-de-deus/README.md">Exemplo</a></p>
+  <p>Os prompts nascem dos templates em <code>prompts/</code> e a sessão fica no seu navegador. Buscas de metadados e execuções opcionais só acontecem quando você as aciona.</p>
 </footer>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <script src="assets/app.js"></script>
+<script src="assets/pesquisa.js"></script>
+<script src="assets/sessao.js"></script>
 </body>
 </html>

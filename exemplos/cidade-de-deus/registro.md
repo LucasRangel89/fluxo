@@ -29,6 +29,23 @@ que será confrontado na Etapa 3.*
 
 ---
 
+## Etapa R — Pesquisa e Dossiê de Fontes (opcional)
+
+**Identificação confirmada e ficha essencial:**
+
+**Fatos que realmente importam para esta análise:**
+-
+-
+
+**Fontes consultadas (com links):**
+-
+-
+
+**Incertezas, conflitos e itens “a confirmar”:**
+-
+
+---
+
 ## Etapa 1 — Análise Audiovisual 360°
 
 *(Se analisou em dois tempos, registre 1A nas dimensões 2–5 e 1B nas 1, 6 e 7.)*

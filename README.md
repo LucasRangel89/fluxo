@@ -4,12 +4,14 @@
 
 ![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
-![Versão](https://img.shields.io/badge/vers%C3%A3o-1.0.0-green)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-1.1.0-green)
 
-Um **fluxo de prompts especializado em 3 etapas** para dissecar filmes e
-séries com a ajuda de uma IA (Claude, ChatGPT, Gemini etc.) — em suas camadas
-narrativas, técnicas, artísticas e culturais. Em vez de um resumo genérico, o
-fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
+Um **fluxo de prompts especializado** para dissecar filmes e séries com a
+ajuda de uma IA (Claude, ChatGPT, Gemini etc.) — em suas camadas narrativas,
+técnicas, artísticas e culturais. Em vez de um resumo genérico, o Fluxo
+conduz uma **sessão guiada**: **preparar → pesquisar → mapear → aprofundar →
+sintetizar**, com um modo **Prompt Maestro** que coloca a jornada inteira em
+uma única conversa.
 
 ---
 
@@ -18,6 +20,7 @@ fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
 | Etapa | O que faz | Template | Comando |
 | ----- | --------- | -------- | ------- |
 | **0 · Preparação** *(opcional)* | Identifica a obra, calibra seu objetivo/nível e **registra sua hipótese antes de a IA opinar** — revisitada na Etapa 3 | [`etapa-00`](prompts/etapa-00-preparacao.md) | `fluxo gerar 0` |
+| **R · Pesquisa e Dossiê de Fontes** *(recomendada)* | Separa **fato de interpretação**: ficha verificável, produção, recepção, debates e fontes nomeadas, sem afirmar o que não pode ser confirmado | [`etapa-00r`](prompts/etapa-00r-pesquisa-fontes.md) | `fluxo gerar r` |
 | **1 · Análise Audiovisual 360°** | "Raio-x" da obra em **7 dimensões**: contexto de produção, narrativa, imagem, som, montagem, sociocultural e recepção | [`etapa-01`](prompts/etapa-01-analise-360.md) | `fluxo gerar 1` |
 | **1A + 1B · 360° em dois tempos** *(alternativa à Etapa 1)* | O mesmo raio-x dividido: **Texto** (narrativa, imagem, som, montagem) → **Contexto** (produção, sociocultural, recepção), fechando com a tabela completa das 7 dimensões | [`etapa-01a`](prompts/etapa-01a-analise-texto.md) · [`etapa-01b`](prompts/etapa-01b-analise-contexto.md) | `fluxo gerar 1a` / `1b` |
 | **1S · Análise 360° de Série** *(variante para séries)* | O raio-x pensado para temporadas: **arcos em 3 níveis** (série, temporada, episódio), piloto, cliffhangers, **showrunner** e modelo de exibição | [`etapa-01s`](prompts/etapa-01s-analise-serie.md) | `fluxo gerar 1s` |
@@ -37,10 +40,16 @@ fluxo conduz uma análise progressiva: **mapear → aprofundar → sintetizar**.
 
 ### Opção A — Interface web (recomendado) 🌐
 
-A forma mais simples de usar o Fluxo: preencha o título e o diretor, escolha a
-etapa e copie o prompt pronto — sem terminal, sem caçar placeholders. Ela
-lembra os seus dados no navegador, marca as etapas já copiadas e permite
-baixar cada prompt em `.md`.
+A forma mais simples de usar o Fluxo: diga **qual obra**, escolha
+**filme/longa, dois tempos, série ou comparativa** e clique em **“Montar
+minha sessão”**. A interface busca metadados sem chave (Wikipedia/Wikidata e
+TVMaze), monta um dossiê editável e libera os cartões na ordem certa, com
+progresso, dependências e uma “próxima ação” sempre visível. O caminho padrão
+continua gratuito: copiar o prompt e abrir a sua IA. Opcionalmente, você pode
+executar no próprio navegador com **Puter** (conta/créditos seus), **sua API**
+(BYOK compatível com OpenAI) ou **IA local** quando o Chrome oferecer esse
+recurso. Também é possível colar as respostas de volta para selecionar a
+pergunta da Etapa 2.1, gerar um contexto de continuidade e exportar a sessão.
 
 - **Rodando localmente:** na raiz do repo, `python -m http.server 8000` e abra
   `http://localhost:8000` (precisa ser via HTTP: a página lê os templates de
@@ -68,6 +77,14 @@ pip install -e .
 
 # Veja as etapas e o que cada uma requer
 fluxo listar
+
+# Sessão guiada: só as etapas da trilha + Prompt Maestro + manifesto JSON
+fluxo sessao --trilha padrao --titulo "Cidade de Deus (2002)" \
+  --diretor "Fernando Meirelles e Kátia Lund"
+
+# Ou um único prompt para conduzir a conversa inteira (com pausas de escolha)
+fluxo maestro --trilha serie --titulo "Dark — Temporada 1 (2017)" \
+  --diretor "Baran bo Odar e Jantje Friese" --copiar
 
 # Etapa 0 (opcional) — preparação: sua hipótese registrada antes da IA opinar
 fluxo gerar 0 --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kátia Lund" \
@@ -98,7 +115,8 @@ fluxo gerar 4 --obra-a "Cidade de Deus (2002)" --diretor-a "Fernando Meirelles e
 Sem instalar, direto da raiz do repo: `PYTHONPATH=src python -m fluxo listar`.
 
 **Atalho:** crie de uma vez a pasta da análise com os prompts de todas as
-etapas + um registro para suas anotações:
+etapas, o Prompt Maestro, um manifesto `sessao.json`, um dossiê de fontes e
+um registro para suas anotações:
 
 ```bash
 fluxo novo --titulo "Cidade de Deus (2002)" --diretor "Fernando Meirelles e Kátia Lund"
@@ -114,8 +132,10 @@ você.
 | Comando | Descrição |
 | ------- | --------- |
 | `fluxo listar` | Lista as etapas e os dados que cada uma requer |
-| `fluxo gerar <etapa>` | Gera o prompt da etapa (`0`, `1`, `1a`, `1b`, `1s`, `2.1`, `2.2`, `2.3`, `3`, `4`). Flags: `--titulo`, `--diretor`, `--tipo`, `--objetivo`, `--nivel`, `--impressoes`, `--pergunta`, `--sequencia`, `--obra-a`/`--diretor-a`/`--obra-b`/`--diretor-b`/`--eixo` (comparativa), `--modo` (`padrao`/`iniciante`/`academico`), `--salvar arquivo`, `--copiar` |
-| `fluxo novo --titulo "..."` | Cria `analises/<slug>/` com os prompts de **todas as etapas** e um `registro.md`. Aceita as mesmas flags do `gerar`, mais `--slug`, `--destino`, `--forcar` |
+| `fluxo gerar <etapa>` | Gera o prompt da etapa (`0`, `r`, `1`, `1a`, `1b`, `1s`, `2.1`, `2.2`, `2.3`, `3`, `4`). Flags: `--titulo`, `--diretor`, `--tipo`, `--objetivo`, `--nivel`, `--impressoes`, `--pergunta`, `--sequencia`, `--obra-a`/`--diretor-a`/`--obra-b`/`--diretor-b`/`--eixo` (comparativa), `--dossie`/`--dossie-arquivo`, `--modo` (`padrao`/`iniciante`/`academico`), `--salvar arquivo`, `--copiar` |
+| `fluxo sessao` | Cria só a trilha escolhida (`padrao`, `dois-tempos`, `serie`, `comparativa`), já preparada para importar respostas; inclui Prompt Maestro, `sessao.json` e dossiê |
+| `fluxo maestro` | Gera um prompt único que conduz todas as etapas em uma conversa, parando para você escolher a pergunta da 2.1 e a sequência da 2.3 |
+| `fluxo novo --titulo "..."` | Cria `analises/<slug>/` com os prompts de **todas as etapas**, Prompt Maestro, manifesto, dossiê e um `registro.md`. Aceita as mesmas flags do `gerar`, mais `--slug`, `--destino`, `--forcar` |
 | `fluxo interativo` | Modo guiado: responde às perguntas no terminal e monta os prompts etapa por etapa (sem decorar flags) |
 | `fluxo --versao` | Mostra a versão |
 
@@ -124,7 +144,9 @@ você.
 ## Exemplo
 
 Em [`exemplos/cidade-de-deus/`](exemplos/cidade-de-deus) você encontra o fluxo
-completo já preenchido para **Cidade de Deus (2002)** — os prompts das 10 etapas prontos para colar, um exemplo de perguntas que a Etapa 2.1 costuma gerar e o registro
+completo já preenchido para **Cidade de Deus (2002)** — os prompts das 11
+etapas prontos para colar, o Prompt Maestro, o dossiê de fontes, o manifesto
+da sessão, um exemplo de perguntas que a Etapa 2.1 costuma gerar e o registro
 da análise.
 
 ---
@@ -139,6 +161,7 @@ fluxo/
 │   └── fluxo.md                   # Guia completo do fluxo
 ├── prompts/                       # ★ Os templates das etapas (fonte da verdade)
 │   ├── etapa-00-preparacao.md
+│   ├── etapa-00r-pesquisa-fontes.md
 │   ├── etapa-01-analise-360.md
 │   ├── etapa-01a-analise-texto.md
 │   ├── etapa-01b-analise-contexto.md
@@ -185,9 +208,13 @@ O projeto está evoluindo em fases, a partir de uma
 - [x] **Fase 4 — Variantes e base**: séries (1S), comparativa (Etapa 4),
   modos iniciante × acadêmico, CLI interativa e empacotamento dos
   prompts — **v1.0.0** 🎉
+- [x] **Fase 5 — Sessão guiada**: Etapa R (fontes), busca gratuita de
+  metadados, jornada por trilhas, Prompt Maestro, importação de respostas,
+  continuidade entre conversas e executores opcionais sem chave do projeto
+  — **v1.1.0**
 
-Ideias para mais adiante: tradução dos prompts (EN/ES) e integração opcional
-com APIs de LLMs.
+Ideias para mais adiante: tradução dos prompts (EN/ES), mais fontes públicas
+de metadados e exportações editoriais da análise.
 
 ## Contribuindo
 

@@ -148,6 +148,7 @@ por tipo de obra e base técnica).
 | 2026-10-20 | **Fase 2 implementada**: UI web estática (P15) em `index.html` + `assets/` | Lê `prompts/` via fetch (fonte única); `.nojekyll` p/ GitHub Pages; testes anti-drift (`tests/test_web.py`); repo v0.3.0 |
 | 2026-10-20 | **Fase 3 implementada**: Etapa 0, 1A/1B em dois tempos, close reading 2.3 e revisita à hipótese (P4, P5, P8, P9 completo) | 1A/1B como **alternativa** à Etapa 1 (não substituição); UI deriva os campos dos placeholders do template; repo v0.4.0 |
 | 2026-10-21 | **Fase 4 implementada**: variantes 1S (séries) e Etapa 4 (comparativa), modos iniciante × acadêmico, CLI interativa e prompts empacotados (P12–P14, P16, P17) | **Plano faseado concluído** (P1–P17); repo v1.0.0 |
+| 2026-10-21 | **Fase 5 implementada**: sessão guiada por trilhas, Etapa R de fontes, metadados públicos, Prompt Maestro, importação de respostas e executores opcionais sem chave do projeto | O núcleo continua estático e gratuito para publicar; Puter/BYOK/IA local são camadas opt-in sustentadas pelo usuário/dispositivo; repo v1.1.0 |
 
 ## 6. Plano faseado (decidido)
 
@@ -169,6 +170,13 @@ por tipo de obra e base técnica).
   (iniciante × acadêmico), CLI interativa e empacotamento dos prompts no
   pacote Python.
 
-**Plano concluído** 🎬 — todas as propostas P1–P17 foram implementadas e o
-projeto alcançou a **v1.0.0**. Ideias futuras registradas no README:
-tradução dos prompts (EN/ES) e integração opcional com APIs de LLMs.
+**Plano original concluído** 🎬 — todas as propostas P1–P17 foram
+implementadas e o projeto alcançou a **v1.0.0**.
+
+- **Fase 5 — Produto e pesquisa** ✅
+  Sessão guiada, trilhas, Etapa R, Prompt Maestro, busca pública de
+  metadados, contexto de continuidade e execução opcional sem backend nem
+  chave compartilhada — **v1.1.0**.
+
+Ideias futuras registradas no README: tradução dos prompts (EN/ES), novas
+fontes públicas e exportações editoriais.

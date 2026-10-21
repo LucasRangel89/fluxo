@@ -34,3 +34,14 @@ Realize uma análise aprofundada da série **Cidade de Deus (2002)**, criada por
 Formato da resposta:
 - Use um cabeçalho para cada uma das 7 dimensões, com 2 a 4 parágrafos (ou tópicos equivalentes) por dimensão, sempre com exemplos de episódios específicos (T1:E5).
 - Ao final: (a) uma tabela-resumo "Dimensão → Principal achado"; e (b) indique o **episódio-síntese** — aquele que melhor condensa a identidade da série — justificando a escolha.
+
+---
+Contexto factual e fontes reunidos na sessão (use para fatos externos; não substitui as evidências formais da própria obra):
+
+Referência inicial para verificar na Etapa R: Cidade de Deus (2002), direção de Fernando Meirelles e codireção de Kátia Lund, baseado no romance de Paulo Lins. Conferir ficha completa, produção, recepção e indicações em fontes primárias e especializadas antes de usar qualquer dado externo.
+
+---
+Instrução de continuidade do Fluxo: ao final da resposta principal, acrescente uma seção curta intitulada `## Dados para o Fluxo`, com:
+- RESUMO: até 3 frases com os achados que precisam ser lembrados nas próximas etapas.
+- Até 3 linhas `SEQUENCIA_SUGERIDA:` com sequências férteis para close reading, incluindo minutagem ou episódio quando tiver confiança.
+Não deixe essa seção substituir nem resumir a análise pedida acima.

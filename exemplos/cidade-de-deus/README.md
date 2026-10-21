@@ -19,6 +19,7 @@ comentário social.
 | Arquivo | Etapa | Conteúdo |
 | ------- | ----- | -------- |
 | [`00-prompt-preparacao.md`](00-prompt-preparacao.md) | 0 | Preparação: a hipótese inicial, registrada antes da análise |
+| [`00r-prompt-pesquisa-fontes.md`](00r-prompt-pesquisa-fontes.md) | R | Pesquisa factual e dossiê de fontes antes da interpretação |
 | [`01-prompt-analise-360.md`](01-prompt-analise-360.md) | 1 | Prompt da Análise 360°, pronto para colar |
 | [`01a-prompt-analise-360-texto.md`](01a-prompt-analise-360-texto.md) | 1A | Alternativa à Etapa 1 — 1º tempo: o texto (dimensões 2–5) |
 | [`01b-prompt-analise-360-contexto.md`](01b-prompt-analise-360-contexto.md) | 1B | Alternativa à Etapa 1 — 2º tempo: o contexto (dimensões 1, 6 e 7) |
@@ -29,8 +30,13 @@ comentário social.
 | [`03-prompt-sintese-conexoes.md`](03-prompt-sintese-conexoes.md) | 3 | Prompt de síntese e conexões |
 | [`04-prompt-comparativa.md`](04-prompt-comparativa.md) | 4 | Comparativa Cidade de Deus × Tropa de Elite: duas visões da violência urbana brasileira |
 | [`registro.md`](registro.md) | — | Modelo para registrar os achados da análise |
+| [`00-prompt-maestro.md`](00-prompt-maestro.md) | Maestro | Alternativa: a sessão inteira conduzida por um único prompt |
+| [`sessao.json`](sessao.json) | — | Manifesto da sessão guiada (trilha, campos e ordem das etapas) |
+| [`dossie-de-fontes.md`](dossie-de-fontes.md) | R | Dossiê factual inicial e editável |
 
-> ⚠️ Cole os prompts **na ordem, na mesma conversa** com a IA.
+> ⚠️ Você pode colar os prompts **na ordem, na mesma conversa**, ou começar
+> pelo `00-prompt-maestro.md` para deixar a IA conduzir a sessão. Não use os
+> dois formatos na mesma conversa — isso repetiria as instruções.
 
 ---
 
@@ -82,6 +88,7 @@ fluxo novo \
   --obra-b "Tropa de Elite (2007)" \
   --diretor-b "José Padilha" \
   --eixo "Duas visões da violência urbana brasileira: a favela pelos olhos de quem mora nela (Buscapé, o fotógrafo) × pelos olhos do Estado (Cap. Nascimento, o BOPE) — forma e ética do olhar" \
+  --dossie "Referência inicial para verificar na Etapa R: Cidade de Deus (2002), direção de Fernando Meirelles e codireção de Kátia Lund, baseado no romance de Paulo Lins. Conferir ficha completa, produção, recepção e indicações em fontes primárias e especializadas antes de usar qualquer dado externo." \
   --slug cidade-de-deus \
   --destino exemplos
 ```
@@ -90,8 +97,11 @@ fluxo novo \
 
 ```bash
 fluxo novo --titulo "Sua Obra (Ano)" --diretor "Nome do Diretor(a)"
-# → cria analises/sua-obra-ano/ com os prompts de todas as etapas e o registro.md
+# → cria analises/sua-obra-ano/ com todas as etapas, Maestro, dossiê e registro.md
+
+# Para uma pasta enxuta, com só a trilha que você vai usar:
+fluxo sessao --trilha padrao --titulo "Sua Obra (Ano)" --diretor "Nome"
 ```
 
-Depois é só: **assistir → colar o prompt da Etapa 1 → seguir o fluxo →
-anotar os achados no `registro.md`**. Bom filme! 🎬
+Depois é só: **assistir → preparar e verificar as fontes → seguir a sessão
+ou o Maestro → anotar os achados no `registro.md`**. Bom filme! 🎬

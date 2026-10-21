@@ -14,7 +14,8 @@ próximos passos.
 
 ```mermaid
 flowchart TD
-    Z["<b>Etapa 0 · Preparação</b> (opcional)<br/>sua hipótese registrada antes da IA opinar"] --> A["<b>Etapa 1 · Análise 360°</b><br/>7 dimensões da produção à recepção"]
+    Z["<b>Etapa 0 · Preparação</b> (opcional)<br/>sua hipótese registrada antes da IA opinar"] --> R["<b>Etapa R · Pesquisa e fontes</b> (recomendada)<br/>fato antes da interpretação"]
+    R --> A["<b>Etapa 1 · Análise 360°</b><br/>7 dimensões da produção à recepção"]
     A --> B["<b>Etapa 2.1 · Proposta</b><br/>a IA sugere 3 a 5 perguntas analíticas"]
     A -.-> A1["<i>Alternativa em 2 tempos:</i><br/><b>1A Texto</b> → <b>1B Contexto</b>"]
     B --> C{"Você escolhe<br/>1 pergunta"}
@@ -30,6 +31,7 @@ flowchart TD
 | Etapa | Papel no fluxo | Analogia |
 | ----- | -------------- | -------- |
 | **0 — Preparação** *(opcional)* | Registrar **sua** leitura antes da IA: hipótese, objetivo, nível | A anamnese |
+| **R — Pesquisa e fontes** *(recomendada)* | Construir um dossiê verificável antes de interpretar: identidade, produção, recepção e controvérsias com fontes | O exame laboratorial |
 | **1 — Análise 360°** | Mapear tudo: narrativa, imagem, som, montagem, contexto e legado | O raio-x |
 | **1A + 1B** *(alternativa)* | O mesmo raio-x em dois tempos: primeiro o texto, depois o contexto | Raio-x em duas sessões |
 | **1S — 360° seriada** *(variante)* | O raio-x traduzido para temporadas: arcos longos, piloto, cliffhangers e showrunner | O raio-x seriado |
@@ -56,6 +58,49 @@ Por que registrar a hipótese antes? Porque, sem isso, a leitura da IA
 "ancora" a sua — no fim, você acha que sempre pensou daquele jeito. Com o
 registro, a Etapa 3 vira um **antes/depois honesto** da sua própria
 interpretação, que é o maior aprendizado do fluxo.
+
+### A Etapa R: fato antes da interpretação
+
+A [Etapa R](../prompts/etapa-00r-pesquisa-fontes.md) cria uma separação
+deliberada entre **pesquisa** e **leitura crítica**. A dimensão 1 da Análise
+360° é factual e, portanto, a mais vulnerável a datas, prêmios e equipes
+inventadas. Antes dela, o dossiê pede: identidade inequívoca da obra, ficha
+verificável, contexto de produção, recepção contemporânea e posterior,
+controvérsias documentadas e uma lista de **afirmações incertas**. Se a IA
+não tiver acesso à web, ela deve dizer isso e produzir apenas um mapa de
+verificação — não transformar memória em referência.
+
+A interface adiciona uma meia-máquina factual quando o navegador está
+online: busca de títulos em **Wikipedia/Wikidata** e, para séries,
+**TVMaze**. Ela nunca escolhe sozinha: você confirma o resultado, e os dados
+viram um dossiê editável com URLs. Modelos com navegação entram na etapa
+seguinte como camada de verificação, não como oráculo.
+
+### Sessão guiada, Maestro e respostas
+
+A Fase 5 organiza os templates em **trilhas**, em vez de expor todas as
+etapas como se fossem equivalentes:
+
+| Trilha | Ordem |
+| ------ | ----- |
+| Filme/longa padrão | 0 → R → 1 → 2.1 → 2.2 → 2.3 → 3 |
+| Raio-x em dois tempos | 0 → R → 1A → 1B → 2.1 → 2.2 → 2.3 → 3 |
+| Série/temporada | 0 → R → 1S → 2.1 → 2.2 → 2.3 → 3 |
+| Comparativa | R → 4 |
+
+Na web, cada sessão mostra o que está pronto, aguardando uma resposta ou
+ainda bloqueado. Ao colar a resposta de cada etapa, o Fluxo guarda o texto,
+extrai um resumo, cria um **pacote de contexto** para continuar em outra
+conversa e reconhece as perguntas da Etapa 2.1 e sequências sugeridas para
+a 2.3. O **Prompt Maestro** (`fluxo maestro`) é a alternativa de baixo
+atrito: um único texto pede que a IA conduza a trilha inteira, mas ainda
+pare nos pontos em que a decisão é sua — principalmente a pergunta da 2.1
+e a sequência opcional da 2.3.
+
+O projeto não usa uma chave de IA compartilhada. Você pode copiar e usar sua
+própria ferramenta, ou optar por um executor sustentado pela sua conta/chave
+(Puter ou BYOK) ou pelo seu aparelho (IA local do navegador). Isso mantém o
+Fluxo gratuito para publicar e impede que uma cota pública acabe para todos.
 
 ---
 
@@ -294,3 +339,22 @@ O modo calibra o registro das respostas nas etapas de abertura (1, 1A, 1S e
 **acadêmico** se quer rigor teórico com autores e conceitos nomeados, e
 **padrão** no meio do caminho. Na CLI é a flag `--modo`; na interface web,
 o seletor "Modo de análise".
+
+**Sessão guiada ou Prompt Maestro?**
+Use a **sessão guiada** quando quiser controle, salvar respostas, trocar de
+IA no meio ou revisar a pergunta/sequência fora do chat. Use o **Maestro**
+quando o atrito for o maior obstáculo: um único prompt abre a conversa e a
+IA lidera as etapas, parando para as suas escolhas. A sessão guiada é o
+caminho mais robusto; o Maestro, o mais fluido.
+
+**O Fluxo paga ou fornece uma IA gratuita?**
+Não — e isso é uma decisão de acessibilidade e sustentabilidade. O projeto é
+estático e não mantém uma cota compartilhada que poderia esgotar. Você usa
+sua IA atual pelo copiar/colar ou escolhe um executor opcional baseado na
+sua conta, na sua chave ou no seu dispositivo.
+
+**A busca de metadados substitui a Etapa R?**
+Não. Wikipedia/Wikidata e TVMaze aceleram a identificação e a ficha básica,
+mas o dossiê crítico continua precisando de verificação, fontes primárias e
+registro de incertezas. Trate os metadados como matéria-prima com etiqueta,
+não como verdade final.
