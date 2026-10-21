@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fluxo-prompts"
+version = "1.0.0"
+description = "Fluxo de prompts especializado para análise de obras audiovisuais (filmes e séries) com IA."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Lucas Rangel" },
+]
+keywords = ["cinema", "series", "prompts", "analise-de-filmes", "llm", "critica-de-cinema"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Multimedia :: Video",
+]
+
+[project.scripts]
+fluxo = "fluxo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fluxo = ["_templates/*.md"]
